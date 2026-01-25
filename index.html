@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCALE AI Maturity Assessment | GTM AI Transformation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #0f172a;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            --gradient-3: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-3);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            font-weight: 400;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--gray-200);
+            height: 4px;
+            z-index: 99;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-2);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 1.5rem 3rem;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            margin-top: 2rem;
+        }
+
+        .welcome-screen h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-screen h1 span {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-screen p {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .scale-preview {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .scale-letter {
+            width: 70px;
+            height: 70px;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .scale-letter:hover {
+            transform: translateY(-4px);
+        }
+
+        .scale-letter span {
+            font-size: 0.6rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        .letter-s { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .letter-c { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .letter-a { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .letter-l { background: linear-gradient(135deg, #10b981, #059669); }
+        .letter-e { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Assessment Screen */
+        .assessment-screen {
+            display: none;
+        }
+
+        .dimension-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .dimension-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .dimension-badge.strategic { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+        .dimension-badge.chart { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+        .dimension-badge.align { background: rgba(6, 182, 212, 0.1); color: #0891b2; }
+        .dimension-badge.launch { background: rgba(16, 185, 129, 0.1); color: #059669; }
+        .dimension-badge.evolve { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+
+        .dimension-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .dimension-description {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .question-card.answered {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .question-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1.25rem;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:hover {
+            border-color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .option-label.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .option-label.selected .option-radio {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .option-label.selected .option-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-level {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .option-text {
+            font-size: 0.9375rem;
+            color: var(--gray-700);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+        }
+
+        .btn-back:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-next:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+        }
+
+        .results-header {
+            text-align: center;
+            background: var(--gradient-3);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .overall-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .score-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .maturity-level {
+            text-align: left;
+        }
+
+        .maturity-level h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .maturity-level p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .result-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .result-dimension {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .result-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .result-info h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .result-info p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .result-score-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .score-level-1 { background: #fee2e2; color: #991b1b; }
+        .score-level-2 { background: #ffedd5; color: #9a3412; }
+        .score-level-3 { background: #fef9c3; color: #854d0e; }
+        .score-level-4 { background: #dcfce7; color: #166534; }
+        .score-level-5 { background: #d1fae5; color: #065f46; }
+
+        .result-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .result-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .recommendations {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .recommendations h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-item::before {
+            content: '→';
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .action-plan {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-plan h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-steps {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .action-step {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h5 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 1rem;
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-section p {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-screen h1 {
+                font-size: 1.75rem;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scale-preview {
+                gap: 0.5rem;
+            }
+
+            .scale-letter {
+                width: 55px;
+                height: 55px;
+                font-size: 1.25rem;
+            }
+
+            .overall-score {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .maturity-level {
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Print styles */
+        @media print {
+            .header, .progress-container, .navigation-buttons, .btn-primary, .btn-secondary {
+                display: none !important;
+            }
+            .container {
+                padding-top: 0;
+            }
+            .results-screen {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <div class="logo"><span>SCALE</span> AI Assessment</div>
+                <div class="header-subtitle">GTM AI Transformation Framework</div>
+            </div>
+            <div id="progress-text" style="font-size: 0.875rem; color: var(--gray-400);"></div>
+        </div>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcome-screen">
+            <h1>Assess Your <span>AI Maturity</span></h1>
+            <p>Discover where you stand on your AI transformation journey using the proven SCALE framework. Get personalized recommendations to accelerate your growth.</p>
+
+            <div class="scale-preview">
+                <div class="scale-letter letter-s">S<span>Strategic</span></div>
+                <div class="scale-letter letter-c">C<span>Chart</span></div>
+                <div class="scale-letter letter-a">A<span>Align</span></div>
+                <div class="scale-letter letter-l">L<span>Launch</span></div>
+                <div class="scale-letter letter-e">E<span>Evolve</span></div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-number">73%</div>
+                    <div class="stat-label">of AI initiatives fail to scale</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4.3x</div>
+                    <div class="stat-label">higher success with SCALE</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">25</div>
+                    <div class="stat-label">questions across 5 dimensions</div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="startAssessment()">
+                Start Your Assessment →
+            </button>
+        </div>
+
+        <!-- Assessment Screen -->
+        <div class="assessment-screen" id="assessment-screen"></div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="results-screen"></div>
+    </div>
+
+    <script>
+        // Assessment Data
+        const assessmentData = {
+            dimensions: [
+                {
+                    id: 'strategic',
+                    letter: 'S',
+                    name: 'Strategic Outcomes',
+                    tagline: 'Business goals before technology',
+                    color: '#2563eb',
+                    gradient: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    questions: [
+                        {
+                            id: 's1',
+                            text: 'How clearly defined are your AI-related business objectives?',
+                            options: [
+                                { level: 1, text: 'We have no specific AI objectives defined' },
+                                { level: 2, text: 'We have vague goals like "use AI to improve efficiency"' },
+                                { level: 3, text: 'We have general objectives tied to business areas (e.g., improve sales)' },
+                                { level: 4, text: 'We have specific, measurable objectives (e.g., increase win rate by 15%)' },
+                                { level: 5, text: 'We have quantified objectives with baselines, targets, and timelines' }
+                            ]
+                        },
+                        {
+                            id: 's2',
+                            text: 'How do you identify opportunities for AI implementation?',
+                            options: [
+                                { level: 1, text: 'We react to vendor pitches or industry buzz' },
+                                { level: 2, text: 'Individual teams experiment with AI tools independently' },
+                                { level: 3, text: 'We evaluate AI based on competitor activity' },
+                                { level: 4, text: 'We systematically identify gaps and match AI solutions to them' },
+                                { level: 5, text: 'We use structured frameworks (like 5 Whys) to find root causes and strategic AI fits' }
+                            ]
+                        },
+                        {
+                            id: 's3',
+                            text: 'How well do you understand the root causes of business challenges before applying AI?',
+                            options: [
+                                { level: 1, text: 'We apply AI to surface-level symptoms without deeper analysis' },
+                                { level: 2, text: 'We sometimes investigate causes but often jump to solutions' },
+                                { level: 3, text: 'We analyze problems but don\'t have a consistent methodology' },
+                                { level: 4, text: 'We use structured analysis to understand gaps before selecting AI' },
+                                { level: 5, text: 'We rigorously apply root cause analysis and categorize gaps (Skills, Systems, Strategy, Product)' }
+                            ]
+                        },
+                        {
+                            id: 's4',
+                            text: 'How do you measure success for AI initiatives?',
+                            options: [
+                                { level: 1, text: 'We don\'t have defined metrics for AI success' },
+                                { level: 2, text: 'We track adoption/usage but not business outcomes' },
+                                { level: 3, text: 'We have some business metrics but inconsistent tracking' },
+                                { level: 4, text: 'We track both process metrics and business outcomes' },
+                                { level: 5, text: 'We have comprehensive measurement with baselines, targets, and attribution' }
+                            ]
+                        },
+                        {
+                            id: 's5',
+                            text: 'How connected are your AI initiatives to revenue and growth goals?',
+                            options: [
+                                { level: 1, text: 'AI initiatives are treated as cost-center experiments' },
+                                { level: 2, text: 'Some initiatives have loose connections to business goals' },
+                                { level: 3, text: 'Most initiatives are tied to departmental objectives' },
+                                { level: 4, text: 'AI initiatives directly support strategic revenue goals' },
+                                { level: 5, text: 'All AI initiatives have clear ROI projections and executive sponsorship' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'chart',
+                    letter: 'C',
+                    name: 'Chart Friction & Foundations',
+                    tagline: 'Map bottlenecks before automation',
+                    color: '#7c3aed',
+                    gradient: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                    questions: [
+                        {
+                            id: 'c1',
+                            text: 'How well have you mapped your current workflows and processes?',
+                            options: [
+                                { level: 1, text: 'We don\'t have documented workflow maps' },
+                                { level: 2, text: 'Some processes are documented but most are tribal knowledge' },
+                                { level: 3, text: 'Key workflows are documented but not regularly updated' },
+                                { level: 4, text: 'We have comprehensive process maps with handoff points identified' },
+                                { level: 5, text: 'We have dynamic process maps that identify people, systems, and friction points' }
+                            ]
+                        },
+                        {
+                            id: 'c2',
+                            text: 'How well do you understand where friction exists in your GTM processes?',
+                            options: [
+                                { level: 1, text: 'We haven\'t analyzed process friction points' },
+                                { level: 2, text: 'We know anecdotally where problems occur' },
+                                { level: 3, text: 'We have identified major bottlenecks but lack quantification' },
+                                { level: 4, text: 'We have quantified friction costs (time, revenue impact)' },
+                                { level: 5, text: 'We continuously measure human and data friction with business impact scores' }
+                            ]
+                        },
+                        {
+                            id: 'c3',
+                            text: 'What is the state of your data infrastructure for AI?',
+                            options: [
+                                { level: 1, text: 'Data is siloed across systems with no unified view' },
+                                { level: 2, text: 'Some data integration exists but quality is inconsistent' },
+                                { level: 3, text: 'We have a data warehouse but limited real-time access' },
+                                { level: 4, text: 'We have good data quality with integration across key systems' },
+                                { level: 5, text: 'We have a modern data stack with unified catalog and strong governance' }
+                            ]
+                        },
+                        {
+                            id: 'c4',
+                            text: 'How ready are your systems for AI integration?',
+                            options: [
+                                { level: 1, text: 'Our systems lack APIs and integration capabilities' },
+                                { level: 2, text: 'Limited API access with manual data transfers' },
+                                { level: 3, text: 'Key systems have APIs but integration is complex' },
+                                { level: 4, text: 'Most systems are API-enabled with standard integrations' },
+                                { level: 5, text: 'Full API ecosystem with automated workflows and real-time sync' }
+                            ]
+                        },
+                        {
+                            id: 'c5',
+                            text: 'How do you prioritize which processes to apply AI to?',
+                            options: [
+                                { level: 1, text: 'No systematic prioritization - we try things randomly' },
+                                { level: 2, text: 'We prioritize based on what seems easiest' },
+                                { level: 3, text: 'We consider impact but don\'t assess feasibility well' },
+                                { level: 4, text: 'We use an impact vs. feasibility matrix for prioritization' },
+                                { level: 5, text: 'We have a scoring system combining business impact, feasibility, and strategic fit' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'align',
+                    letter: 'A',
+                    name: 'Align Capabilities & Readiness',
+                    tagline: 'Match AI capabilities to problems',
+                    color: '#0891b2',
+                    gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                    questions: [
+                        {
+                            id: 'a1',
+                            text: 'How well does your team understand different AI capabilities (classification, generation, extraction, etc.)?',
+                            options: [
+                                { level: 1, text: 'Limited understanding - AI is seen as one general thing' },
+                                { level: 2, text: 'Some awareness of generative AI vs. analytics' },
+                                { level: 3, text: 'Understand major capability categories but not how to apply them' },
+                                { level: 4, text: 'Can match specific AI capabilities to business problems' },
+                                { level: 5, text: 'Expert-level capability mapping with vendor landscape knowledge' }
+                            ]
+                        },
+                        {
+                            id: 'a2',
+                            text: 'How do you approach selecting AI tools and vendors?',
+                            options: [
+                                { level: 1, text: 'We pick tools based on marketing or recommendations' },
+                                { level: 2, text: 'We evaluate based on features and price' },
+                                { level: 3, text: 'We have evaluation criteria but inconsistent application' },
+                                { level: 4, text: 'We use structured evaluation (features, fit, security, scale)' },
+                                { level: 5, text: 'We have a formal vendor evaluation framework with weighted criteria' }
+                            ]
+                        },
+                        {
+                            id: 'a3',
+                            text: 'How mature is your team\'s AI prompting and interaction skills?',
+                            options: [
+                                { level: 1, text: 'No formal training - people figure it out on their own' },
+                                { level: 2, text: 'Basic awareness but inconsistent prompt quality' },
+                                { level: 3, text: 'Some team members are skilled; others struggle' },
+                                { level: 4, text: 'We use structured frameworks (like GRACE) for prompting' },
+                                { level: 5, text: 'Organization-wide prompt excellence with shared libraries and best practices' }
+                            ]
+                        },
+                        {
+                            id: 'a4',
+                            text: 'How do you approach build vs. buy decisions for AI?',
+                            options: [
+                                { level: 1, text: 'We don\'t have a framework - decisions are ad-hoc' },
+                                { level: 2, text: 'We default to buying or building without analysis' },
+                                { level: 3, text: 'We consider basic factors but lack rigor' },
+                                { level: 4, text: 'We evaluate based on strategic value, resources, and TCO' },
+                                { level: 5, text: 'We have a weighted scoring system for build/buy/hybrid decisions' }
+                            ]
+                        },
+                        {
+                            id: 'a5',
+                            text: 'How ready is your organization culturally for AI adoption?',
+                            options: [
+                                { level: 1, text: 'Significant resistance or fear about AI' },
+                                { level: 2, text: 'Mixed feelings - some enthusiastic, many skeptical' },
+                                { level: 3, text: 'Generally open but lacking skills and confidence' },
+                                { level: 4, text: 'Strong interest with active learning and experimentation' },
+                                { level: 5, text: 'AI-first culture with executive sponsorship and enablement programs' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'launch',
+                    letter: 'L',
+                    name: 'Launch with Control',
+                    tagline: 'Pilot with metrics and guardrails',
+                    color: '#059669',
+                    gradient: 'linear-gradient(135deg, #10b981, #059669)',
+                    questions: [
+                        {
+                            id: 'l1',
+                            text: 'How do you approach AI pilots and initial implementations?',
+                            options: [
+                                { level: 1, text: 'We deploy broadly without piloting' },
+                                { level: 2, text: 'Informal testing by interested individuals' },
+                                { level: 3, text: 'We pilot but without structured success criteria' },
+                                { level: 4, text: 'Structured pilots with defined scope, team, and metrics' },
+                                { level: 5, text: 'Hypothesis-driven pilots with tiger teams and executive sponsorship' }
+                            ]
+                        },
+                        {
+                            id: 'l2',
+                            text: 'How well do you establish baselines before AI implementation?',
+                            options: [
+                                { level: 1, text: 'We don\'t measure baseline performance' },
+                                { level: 2, text: 'We have general ideas but no specific measurements' },
+                                { level: 3, text: 'We capture some baseline metrics inconsistently' },
+                                { level: 4, text: 'We systematically measure key metrics before implementation' },
+                                { level: 5, text: 'Comprehensive baseline measurement with control groups when possible' }
+                            ]
+                        },
+                        {
+                            id: 'l3',
+                            text: 'How do you manage risks during AI implementation?',
+                            options: [
+                                { level: 1, text: 'We don\'t formally assess or manage AI risks' },
+                                { level: 2, text: 'We react to problems as they arise' },
+                                { level: 3, text: 'Basic risk awareness but no formal mitigation plans' },
+                                { level: 4, text: 'Proactive risk identification with mitigation strategies' },
+                                { level: 5, text: 'Comprehensive risk framework with guardrails, controls, and monitoring' }
+                            ]
+                        },
+                        {
+                            id: 'l4',
+                            text: 'How do you gather and act on feedback during pilots?',
+                            options: [
+                                { level: 1, text: 'No structured feedback collection' },
+                                { level: 2, text: 'Informal feedback from occasional conversations' },
+                                { level: 3, text: 'Regular check-ins but inconsistent action on feedback' },
+                                { level: 4, text: 'Structured feedback loops with rapid iteration cycles' },
+                                { level: 5, text: 'Continuous feedback integrated into automated improvement processes' }
+                            ]
+                        },
+                        {
+                            id: 'l5',
+                            text: 'How do you communicate pilot results internally?',
+                            options: [
+                                { level: 1, text: 'Results stay within the pilot team' },
+                                { level: 2, text: 'Informal sharing through word of mouth' },
+                                { level: 3, text: 'Occasional presentations to leadership' },
+                                { level: 4, text: 'Structured reporting with quantified impact to stakeholders' },
+                                { level: 5, text: 'Strategic communication plan building momentum for scaling' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'evolve',
+                    letter: 'E',
+                    name: 'Evolve & Expand',
+                    tagline: 'Scale with governance and measurement',
+                    color: '#d97706',
+                    gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    questions: [
+                        {
+                            id: 'e1',
+                            text: 'How do you scale successful AI initiatives?',
+                            options: [
+                                { level: 1, text: 'We haven\'t scaled any AI initiatives yet' },
+                                { level: 2, text: 'Scaling happens organically without a plan' },
+                                { level: 3, text: 'Some structured expansion but inconsistent' },
+                                { level: 4, text: 'Defined scaling playbook from pilot to department-wide' },
+                                { level: 5, text: 'Enterprise scaling blueprint with phased rollout and success criteria' }
+                            ]
+                        },
+                        {
+                            id: 'e2',
+                            text: 'What AI governance structures do you have in place?',
+                            options: [
+                                { level: 1, text: 'No formal AI governance' },
+                                { level: 2, text: 'Basic policies drafted but not enforced' },
+                                { level: 3, text: 'Governance exists in some areas but not comprehensive' },
+                                { level: 4, text: 'Established governance with clear ownership and decision rights' },
+                                { level: 5, text: 'AI Center of Excellence with cross-functional governance and standards' }
+                            ]
+                        },
+                        {
+                            id: 'e3',
+                            text: 'How do you measure AI value at an enterprise level?',
+                            options: [
+                                { level: 1, text: 'No enterprise-level AI measurement' },
+                                { level: 2, text: 'Track costs but not value creation' },
+                                { level: 3, text: 'Department-level ROI but not aggregated' },
+                                { level: 4, text: 'Multi-level measurement (technical, operational, business)' },
+                                { level: 5, text: 'Executive dashboards with comprehensive AI portfolio metrics' }
+                            ]
+                        },
+                        {
+                            id: 'e4',
+                            text: 'How are roles and skills evolving with AI adoption?',
+                            options: [
+                                { level: 1, text: 'No changes to roles or skill requirements' },
+                                { level: 2, text: 'Some individuals upskilling independently' },
+                                { level: 3, text: 'Ad-hoc training programs with inconsistent coverage' },
+                                { level: 4, text: 'Defined AI skill tracks and role evolution paths' },
+                                { level: 5, text: 'Strategic workforce transformation with new AI-native roles' }
+                            ]
+                        },
+                        {
+                            id: 'e5',
+                            text: 'How do you continuously improve your AI systems?',
+                            options: [
+                                { level: 1, text: 'No systematic improvement process' },
+                                { level: 2, text: 'Fix problems when they become critical' },
+                                { level: 3, text: 'Periodic reviews with some improvements' },
+                                { level: 4, text: 'Regular optimization based on performance data' },
+                                { level: 5, text: 'Continuous improvement loops with automated monitoring and iteration' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // State
+        let currentDimension = 0;
+        let answers = {};
+
+        // Initialize
+        function init() {
+            updateProgress();
+        }
+
+        function startAssessment() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('assessment-screen').style.display = 'block';
+            renderDimension(0);
+            updateProgress();
+        }
+
+        function renderDimension(index) {
+            currentDimension = index;
+            const dimension = assessmentData.dimensions[index];
+            const screen = document.getElementById('assessment-screen');
+
+            let html = `
+                <div class="dimension-header animate-in">
+                    <div class="dimension-badge ${dimension.id}">
+                        <span style="font-size: 1.25rem; font-weight: 700;">${dimension.letter}</span>
+                        Phase ${index + 1} of 5
+                    </div>
+                    <h2 class="dimension-title">${dimension.name}</h2>
+                    <p class="dimension-description">${dimension.tagline}</p>
+                </div>
+            `;
+
+            dimension.questions.forEach((question, qIndex) => {
+                const answered = answers[question.id] !== undefined;
+                html += `
+                    <div class="question-card ${answered ? 'answered' : ''}" id="question-${question.id}">
+                        <div class="question-number">Question ${qIndex + 1} of ${dimension.questions.length}</div>
+                        <div class="question-text">${question.text}</div>
+                        <div class="options-grid">
+                            ${question.options.map(option => `
+                                <label class="option-label ${answers[question.id] === option.level ? 'selected' : ''}"
+                                       onclick="selectOption('${question.id}', ${option.level}, this)">
+                                    <div class="option-radio"></div>
+                                    <div class="option-content">
+                                        <div class="option-level">Level ${option.level}</div>
+                                        <div class="option-text">${option.text}</div>
+                                    </div>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="navigation-buttons">
+                    <button class="btn-nav btn-back" onclick="previousDimension()" ${index === 0 ? 'style="visibility: hidden;"' : ''}>
+                        ← Previous
+                    </button>
+                    <button class="btn-nav btn-next" onclick="nextDimension()" id="next-btn">
+                        ${index === 4 ? 'View Results' : 'Next Dimension'} →
+                    </button>
+                </div>
+            `;
+
+            screen.innerHTML = html;
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(questionId, level, element) {
+            answers[questionId] = level;
+
+            // Update UI
+            const card = element.closest('.question-card');
+            card.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            card.classList.add('answered');
+
+            updateProgress();
+        }
+
+        function previousDimension() {
+            if (currentDimension > 0) {
+                renderDimension(currentDimension - 1);
+            }
+        }
+
+        function nextDimension() {
+            // Check if all questions in current dimension are answered
+            const dimension = assessmentData.dimensions[currentDimension];
+            const unanswered = dimension.questions.filter(q => answers[q.id] === undefined);
+
+            if (unanswered.length > 0) {
+                // Scroll to first unanswered question
+                const firstUnanswered = document.getElementById(`question-${unanswered[0].id}`);
+                firstUnanswered.style.borderColor = '#ef4444';
+                firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    firstUnanswered.style.borderColor = '';
+                }, 2000);
+                return;
+            }
+
+            if (currentDimension < 4) {
+                renderDimension(currentDimension + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const totalQuestions = 25;
+            const answeredCount = Object.keys(answers).length;
+            const progress = (answeredCount / totalQuestions) * 100;
+
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${answeredCount}/${totalQuestions} questions`;
+        }
+
+        function calculateScores() {
+            const scores = {};
+            let totalScore = 0;
+            let totalQuestions = 0;
+
+            assessmentData.dimensions.forEach(dimension => {
+                let dimensionTotal = 0;
+                dimension.questions.forEach(question => {
+                    if (answers[question.id]) {
+                        dimensionTotal += answers[question.id];
+                        totalScore += answers[question.id];
+                        totalQuestions++;
+                    }
+                });
+                scores[dimension.id] = {
+                    total: dimensionTotal,
+                    average: dimensionTotal / dimension.questions.length,
+                    percentage: (dimensionTotal / (dimension.questions.length * 5)) * 100
+                };
+            });
+
+            scores.overall = {
+                total: totalScore,
+                average: totalScore / totalQuestions,
+                percentage: (totalScore / (totalQuestions * 5)) * 100
+            };
+
+            return scores;
+        }
+
+        function getMaturityLevel(average) {
+            if (average < 1.5) return { level: 1, name: 'Experimenting', description: 'Ad-hoc AI exploration without strategic direction' };
+            if (average < 2.5) return { level: 2, name: 'Exploring', description: 'Beginning to identify AI opportunities with emerging structure' };
+            if (average < 3.5) return { level: 3, name: 'Establishing', description: 'Structured approach emerging with defined processes' };
+            if (average < 4.5) return { level: 4, name: 'Executing', description: 'Systematic implementation with measurable outcomes' };
+            return { level: 5, name: 'Scaling', description: 'Enterprise-wide AI integration with continuous improvement' };
+        }
+
+        function getRecommendations(dimensionId, average) {
+            const recommendations = {
+                strategic: {
+                    low: [
+                        'Define 1-2 specific, measurable business objectives for AI',
+                        'Use the 5 Whys technique to identify root causes of business challenges',
+                        'Establish baseline metrics before any AI implementation'
+                    ],
+                    medium: [
+                        'Create a Strategic Outcome Charter with clear targets and timelines',
+                        'Categorize gaps into Skills, Systems, Strategy, and Product',
+                        'Ensure executive sponsorship for all AI initiatives'
+                    ],
+                    high: [
+                        'Expand strategic AI planning across all departments',
+                        'Build predictive models for AI ROI forecasting',
+                        'Create an AI strategy roadmap aligned with 3-year business goals'
+                    ]
+                },
+                chart: {
+                    low: [
+                        'Document your top 3 GTM workflows with people and systems involved',
+                        'Identify your biggest time-wasting activities',
+                        'Audit your data quality in core systems (CRM, marketing automation)'
+                    ],
+                    medium: [
+                        'Create friction maps quantifying business impact of bottlenecks',
+                        'Build an impact vs. feasibility matrix for AI opportunities',
+                        'Assess API readiness across your technology stack'
+                    ],
+                    high: [
+                        'Implement real-time friction monitoring dashboards',
+                        'Build a modern data architecture with unified governance',
+                        'Create automated data quality scoring systems'
+                    ]
+                },
+                align: {
+                    low: [
+                        'Train your team on the 6 core AI capabilities (Classification, Generation, etc.)',
+                        'Start with the GRACE prompting framework for better AI interactions',
+                        'Create a simple vendor evaluation checklist'
+                    ],
+                    medium: [
+                        'Map your friction points to specific AI capabilities',
+                        'Develop a build vs. buy scoring framework',
+                        'Establish AI skill tracks for different roles'
+                    ],
+                    high: [
+                        'Create an AI capability center of excellence',
+                        'Build prompt libraries and best practice repositories',
+                        'Develop AI vendor partnership strategy'
+                    ]
+                },
+                launch: {
+                    low: [
+                        'Start with a single, focused pilot with clear success criteria',
+                        'Assemble a tiger team with executive sponsor and top performers',
+                        'Establish baseline metrics before any implementation'
+                    ],
+                    medium: [
+                        'Implement hypothesis-driven testing for all pilots',
+                        'Create structured feedback loops with weekly check-ins',
+                        'Build a pilot communication strategy for internal momentum'
+                    ],
+                    high: [
+                        'Develop automated pilot monitoring and alerting',
+                        'Create a pilot-to-production playbook',
+                        'Establish pilot success criteria benchmarks across use cases'
+                    ]
+                },
+                evolve: {
+                    low: [
+                        'Document learnings from your first successful pilot',
+                        'Draft basic AI usage policies and guidelines',
+                        'Define who owns AI governance decisions'
+                    ],
+                    medium: [
+                        'Create a scaling blueprint with phased rollout plans',
+                        'Establish multi-level measurement (technical, operational, business)',
+                        'Build AI upskilling programs for affected roles'
+                    ],
+                    high: [
+                        'Establish an AI Center of Excellence',
+                        'Implement continuous improvement loops with automated optimization',
+                        'Create workforce transformation strategy with AI-native roles'
+                    ]
+                }
+            };
+
+            const level = average < 2.5 ? 'low' : average < 4 ? 'medium' : 'high';
+            return recommendations[dimensionId][level];
+        }
+
+        function showResults() {
+            document.getElementById('assessment-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
+
+            const scores = calculateScores();
+            const overallMaturity = getMaturityLevel(scores.overall.average);
+
+            let html = `
+                <div class="results-header animate-in">
+                    <h2>Your SCALE AI Maturity Assessment Results</h2>
+                    <p>Based on your responses across all 5 dimensions</p>
+                    <div class="overall-score">
+                        <div class="score-circle">
+                            <div class="score-value">${scores.overall.average.toFixed(1)}</div>
+                            <div class="score-label">out of 5.0</div>
+                        </div>
+                        <div class="maturity-level">
+                            <h3>Level ${overallMaturity.level}: ${overallMaturity.name}</h3>
+                            <p>${overallMaturity.description}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-grid">
+            `;
+
+            assessmentData.dimensions.forEach(dimension => {
+                const score = scores[dimension.id];
+                const maturity = getMaturityLevel(score.average);
+                const recommendations = getRecommendations(dimension.id, score.average);
+
+                html += `
+                    <div class="result-card animate-in">
+                        <div class="result-card-header">
+                            <div class="result-dimension">
+                                <div class="result-icon" style="background: ${dimension.gradient};">
+                                    ${dimension.letter}
+                                </div>
+                                <div class="result-info">
+                                    <h4>${dimension.name}</h4>
+                                    <p>${dimension.tagline}</p>
+                                </div>
+                            </div>
+                            <div class="result-score-badge score-level-${maturity.level}">
+                                ${score.average.toFixed(1)}
+                            </div>
+                        </div>
+                        <div class="result-bar">
+                            <div class="result-bar-fill" style="width: ${score.percentage}%; background: ${dimension.gradient};"></div>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">
+                            <strong>Level ${maturity.level}: ${maturity.name}</strong> — ${maturity.description}
+                        </div>
+                        <div class="recommendations">
+                            <h5>Recommended Next Steps:</h5>
+                            ${recommendations.map(rec => `
+                                <div class="recommendation-item">${rec}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+
+            // Action Plan
+            const weakestDimensions = Object.entries(scores)
+                .filter(([key]) => key !== 'overall')
+                .sort((a, b) => a[1].average - b[1].average)
+                .slice(0, 3);
+
+            html += `
+                <div class="action-plan animate-in">
+                    <h3>📋 Your 30-Day Action Plan</h3>
+                    <p style="color: var(--gray-600); margin-bottom: 1.5rem;">
+                        Based on your results, focus on these priority areas:
+                    </p>
+                    <div class="action-steps">
+            `;
+
+            const actionSteps = [
+                {
+                    title: 'Week 1: Foundation',
+                    description: `Focus on ${assessmentData.dimensions.find(d => d.id === weakestDimensions[0][0]).name}. ${getRecommendations(weakestDimensions[0][0], weakestDimensions[0][1].average)[0]}.`
+                },
+                {
+                    title: 'Week 2: Build Momentum',
+                    description: `Continue building ${assessmentData.dimensions.find(d => d.id === weakestDimensions[0][0]).name} capabilities while starting to address ${assessmentData.dimensions.find(d => d.id === weakestDimensions[1][0]).name}.`
+                },
+                {
+                    title: 'Week 3: Expand',
+                    description: `Implement structured approaches across your top 2 priority areas. Begin pilot planning if you haven't already.`
+                },
+                {
+                    title: 'Week 4: Measure & Iterate',
+                    description: `Review progress, document learnings, and set targets for the next 30-day cycle.`
+                }
+            ];
+
+            actionSteps.forEach((step, index) => {
+                html += `
+                    <div class="action-step">
+                        <div class="step-number">${index + 1}</div>
+                        <div class="step-content">
+                            <h5>${step.title}</h5>
+                            <p>${step.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+
+                <div class="cta-section animate-in">
+                    <h3>Ready to Accelerate Your AI Transformation?</h3>
+                    <p>Get personalized guidance and advanced training to move up the maturity scale faster.</p>
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="window.print()">
+                            📄 Download Report
+                        </button>
+                        <button class="btn-secondary" onclick="restartAssessment()">
+                            ↻ Retake Assessment
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('results-screen').innerHTML = html;
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-text').textContent = 'Complete';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartAssessment() {
+            answers = {};
+            currentDimension = 0;
+            document.getElementById('results-screen').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'block';
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
