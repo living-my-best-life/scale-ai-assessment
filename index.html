@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCALE AI Maturity Assessment | GTM AI Transformation</title>
+    <meta name="description" content="Assess your organization's AI maturity using the SCALE framework. Get personalized recommendations for your AI transformation journey.">
+    <meta name="theme-color" content="#0a0619">
+    <title>SCALE AI Maturity Assessment | AI Architecture Lab</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -53,6 +55,20 @@
             --shadow-md: 0 4px 6px -1px rgb(10 6 25 / 0.1), 0 2px 4px -2px rgb(10 6 25 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(10 6 25 / 0.1), 0 4px 6px -4px rgb(10 6 25 / 0.1);
             --shadow-xl: 0 20px 25px -5px rgb(10 6 25 / 0.1), 0 8px 10px -6px rgb(10 6 25 / 0.1);
+
+            /* Animation timing */
+            --transition-fast: 150ms ease;
+            --transition-normal: 300ms ease;
+            --transition-slow: 500ms ease;
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         * {
@@ -61,12 +77,38 @@
             box-sizing: border-box;
         }
 
+        /* Focus styles for accessibility */
+        *:focus-visible {
+            outline: 3px solid var(--brand-cyan);
+            outline-offset: 2px;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--gray-50);
             color: var(--gray-800);
             line-height: 1.6;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--brand-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            z-index: 1000;
+            transition: top var(--transition-fast);
+        }
+
+        .skip-link:focus {
+            top: 10px;
         }
 
         /* Header */
@@ -349,13 +391,43 @@
             font-weight: 600;
             border-radius: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px -10px rgba(33, 111, 223, 0.4);
+        }
+
+        .btn-primary:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-secondary {
@@ -367,12 +439,106 @@
             font-weight: 600;
             border-radius: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .btn-secondary:hover {
             background: var(--primary);
             color: white;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* Gamification: Streak Counter */
+        .streak-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--brand-orange), var(--brand-yellow));
+            color: white;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(252, 136, 82, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(252, 136, 82, 0.2); }
+        }
+
+        /* Gamification: Progress Celebration */
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confetti-fall 1s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
+        }
+
+        /* Achievement Badge */
+        .achievement-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            animation: slide-in-right 0.5s ease, fade-out 0.5s ease 2.5s forwards;
+            border-left: 4px solid var(--brand-green);
+        }
+
+        @keyframes slide-in-right {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fade-out {
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .achievement-text h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .achievement-text p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
         }
 
         /* Assessment Screen */
@@ -810,14 +976,162 @@
             flex-wrap: wrap;
         }
 
-        /* Responsive */
+        /* Mobile First Responsive Design */
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .header-logo {
+                height: 35px !important;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .welcome-screen {
+                padding: 2rem 1rem;
+            }
+
+            .welcome-screen h1 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-screen p {
+                font-size: 1rem;
+            }
+
+            .scale-letter {
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+                border-radius: 0.75rem;
+            }
+
+            .scale-letter span {
+                font-size: 0.5rem;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-item {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .btn-primary {
+                width: 100%;
+                padding: 1rem 2rem;
+            }
+
+            .container {
+                padding: 100px 1rem 2rem;
+            }
+
+            .container.with-status-bar {
+                padding-top: 160px;
+            }
+
+            .status-bar-content {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 0 1rem;
+            }
+
+            .status-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .status-dimension {
+                width: 30px;
+                height: 30px;
+                font-size: 0.75rem;
+            }
+
+            .status-connector {
+                width: 12px;
+            }
+
+            .question-card {
+                padding: 1rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option-label {
+                padding: 0.75rem;
+            }
+
+            .option-text {
+                font-size: 0.875rem;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .result-card {
+                padding: 1rem;
+            }
+
+            .result-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .cta-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group button {
+                width: 100%;
+            }
+
+            .achievement-toast {
+                left: 1rem;
+                right: 1rem;
+                bottom: 1rem;
+            }
+        }
+
+        /* Tablets */
         @media (max-width: 768px) {
             .welcome-screen h1 {
                 font-size: 1.75rem;
             }
 
             .stat-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .scale-preview {
@@ -838,6 +1152,36 @@
             .maturity-level {
                 text-align: center;
             }
+
+            .dimension-header {
+                padding: 1.5rem;
+            }
+
+            .dimension-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .welcome-screen {
+                padding: 2rem;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         /* Animations */
@@ -846,13 +1190,80 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .animate-in {
             animation: fadeIn 0.5s ease forwards;
         }
 
+        .animate-scale {
+            animation: scaleIn 0.4s ease forwards;
+        }
+
+        .animate-slide {
+            animation: slideInLeft 0.4s ease forwards;
+        }
+
+        /* Staggered animations for lists */
+        .question-card:nth-child(1) { animation-delay: 0.05s; }
+        .question-card:nth-child(2) { animation-delay: 0.1s; }
+        .question-card:nth-child(3) { animation-delay: 0.15s; }
+        .question-card:nth-child(4) { animation-delay: 0.2s; }
+        .question-card:nth-child(5) { animation-delay: 0.25s; }
+
+        .result-card:nth-child(1) { animation-delay: 0.1s; }
+        .result-card:nth-child(2) { animation-delay: 0.2s; }
+        .result-card:nth-child(3) { animation-delay: 0.3s; }
+        .result-card:nth-child(4) { animation-delay: 0.4s; }
+        .result-card:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Touch-friendly tap targets (WCAG 2.5.5) */
+        @media (pointer: coarse) {
+            .option-label {
+                min-height: 48px;
+            }
+
+            .btn-nav, .btn-primary, .btn-secondary {
+                min-height: 48px;
+            }
+
+            .status-dimension {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .option-label {
+                border-width: 3px;
+            }
+
+            .question-card.answered {
+                border-width: 3px;
+            }
+
+            .btn-primary, .btn-secondary {
+                border: 2px solid currentColor;
+            }
+        }
+
         /* Print styles */
         @media print {
-            .header, .progress-container, .navigation-buttons, .btn-primary, .btn-secondary {
+            .header, .progress-container, .status-bar, .navigation-buttons, .btn-primary, .btn-secondary, .achievement-toast {
                 display: none !important;
             }
             .container {
@@ -861,20 +1272,26 @@
             .results-screen {
                 display: block !important;
             }
+            .result-card {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
+    <!-- Skip link for keyboard accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="header" role="banner">
         <div class="header-content">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <img src="logo-dark.png" alt="AI Business Network" class="header-logo" style="height: 45px; width: auto;">
                 <div>
                     <div class="logo"><span>SCALE</span> AI Assessment</div>
-                    <div class="header-subtitle">GTM AI Transformation Framework</div>
+                    <div class="header-subtitle">AI Architecture Lab</div>
                 </div>
             </div>
-            <div id="progress-text" style="font-size: 0.875rem; color: var(--gray-400);"></div>
+            <div id="progress-text" style="font-size: 0.875rem; color: var(--gray-400);" aria-live="polite"></div>
         </div>
     </header>
 
@@ -905,11 +1322,12 @@
         </div>
     </div>
 
-    <div class="container" id="main-container">
+    <main class="container" id="main-container" role="main">
+        <div id="main-content"></div>
         <!-- Welcome Screen -->
-        <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title">
             <img src="logo-light.png" alt="AI Business Network" style="height: 120px; width: auto; margin-bottom: 1.5rem;">
-            <h1>Assess Your <span>AI Maturity</span></h1>
+            <h1 id="welcome-title">Assess Your <span>AI Maturity</span></h1>
             <p>Discover where you stand on your AI transformation journey using the proven SCALE framework. Get personalized recommendations to accelerate your growth.</p>
 
             <div class="scale-preview">
@@ -947,11 +1365,14 @@
         </div>
 
         <!-- Assessment Screen -->
-        <div class="assessment-screen" id="assessment-screen"></div>
+        <div class="assessment-screen" id="assessment-screen" role="region" aria-label="Assessment questions"></div>
 
         <!-- Results Screen -->
-        <div class="results-screen" id="results-screen"></div>
-    </div>
+        <div class="results-screen" id="results-screen" role="region" aria-label="Assessment results"></div>
+    </main>
+
+    <!-- Achievement Toast Container -->
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <script>
         // Assessment Data
@@ -1359,8 +1780,105 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Gamification state
+        let answerStreak = 0;
+        let achievements = [];
+        const achievementDefinitions = {
+            firstAnswer: { title: 'First Step', description: 'Answered your first question!', icon: '🎯' },
+            streak5: { title: 'On Fire!', description: '5 questions in a row!', icon: '🔥' },
+            dimensionComplete: { title: 'Dimension Master', description: 'Completed a SCALE dimension!', icon: '⭐' },
+            halfwayThere: { title: 'Halfway There', description: '50% complete!', icon: '🚀' },
+            almostDone: { title: 'Final Push', description: 'Just a few more to go!', icon: '💪' },
+            assessmentComplete: { title: 'SCALE Champion', description: 'Assessment complete!', icon: '🏆' }
+        };
+
+        function showAchievementToast(achievementKey) {
+            if (achievements.includes(achievementKey)) return;
+            achievements.push(achievementKey);
+
+            const achievement = achievementDefinitions[achievementKey];
+            if (!achievement) return;
+
+            // Remove any existing toast
+            const existingToast = document.querySelector('.achievement-toast');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `
+                <div class="achievement-icon">${achievement.icon}</div>
+                <div class="achievement-content">
+                    <div style="font-weight: 700; color: var(--brand-dark);">${achievement.title}</div>
+                    <div style="font-size: 0.875rem; color: var(--gray-600);">${achievement.description}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            // Remove after animation
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function createConfetti() {
+            const colors = ['#216fdf', '#fc4e99', '#35a0c4', '#57ec99', '#fc8852', '#fcae26'];
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 200 - 100}px`;
+                confetti.style.top = `${Math.random() * 50 - 25}px`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                celebration.appendChild(confetti);
+            }
+
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 1500);
+        }
+
+        function checkAchievements() {
+            const answeredCount = Object.keys(answers).length;
+
+            // First answer
+            if (answeredCount === 1) {
+                showAchievementToast('firstAnswer');
+            }
+
+            // Streak achievements
+            if (answerStreak === 5) {
+                showAchievementToast('streak5');
+            }
+
+            // Progress milestones
+            if (answeredCount === 13 && !achievements.includes('halfwayThere')) {
+                showAchievementToast('halfwayThere');
+                createConfetti();
+            }
+
+            if (answeredCount === 22 && !achievements.includes('almostDone')) {
+                showAchievementToast('almostDone');
+            }
+
+            // Check dimension completion
+            const dimension = assessmentData.dimensions[currentDimension];
+            const dimensionAnswered = dimension.questions.filter(q => answers[q.id] !== undefined).length;
+            if (dimensionAnswered === 5 && !achievements.includes(`dimension_${dimension.id}`)) {
+                achievements.push(`dimension_${dimension.id}`);
+                showAchievementToast('dimensionComplete');
+                createConfetti();
+            }
+        }
+
         function selectOption(questionId, level, element) {
+            const wasAlreadyAnswered = answers[questionId] !== undefined;
             answers[questionId] = level;
+
+            // Track streak
+            if (!wasAlreadyAnswered) {
+                answerStreak++;
+            }
 
             // Update UI
             const card = element.closest('.question-card');
@@ -1371,6 +1889,11 @@
             card.classList.add('answered');
 
             updateProgress();
+
+            // Check for achievements after new answers
+            if (!wasAlreadyAnswered) {
+                checkAchievements();
+            }
         }
 
         function previousDimension() {
@@ -1593,6 +2116,11 @@
             document.getElementById('status-bar').classList.remove('visible');
             document.getElementById('main-container').classList.remove('with-status-bar');
 
+            // Celebrate completion!
+            showAchievementToast('assessmentComplete');
+            setTimeout(() => createConfetti(), 500);
+            setTimeout(() => createConfetti(), 1000);
+
             const scores = calculateScores();
             const overallMaturity = getMaturityLevel(scores.overall.average);
 
@@ -1733,6 +2261,8 @@
         function restartAssessment() {
             answers = {};
             currentDimension = 0;
+            answerStreak = 0;
+            achievements = [];
             document.getElementById('results-screen').style.display = 'none';
             document.getElementById('welcome-screen').style.display = 'block';
             document.getElementById('status-bar').classList.remove('visible');
