@@ -938,6 +938,12 @@
             <button class="btn-primary" onclick="startAssessment()">
                 Start Your Assessment →
             </button>
+
+            <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
+                <p style="font-size: 0.95rem; color: var(--gray-600); max-width: 550px; margin: 0 auto;">
+                    <strong style="color: var(--brand-blue);">Bring your results to the AI Architecture Lab</strong> to move to the next level, implement effectively, and ensure you realize the true value of AI.
+                </p>
+            </div>
         </div>
 
         <!-- Assessment Screen -->
@@ -1700,8 +1706,10 @@
                 </div>
 
                 <div class="cta-section animate-in">
-                    <h3>Ready to Accelerate Your AI Transformation?</h3>
-                    <p>Get personalized guidance and advanced training to move up the maturity scale faster.</p>
+                    <h3>Take Your Results to the AI Architecture Lab</h3>
+                    <p style="max-width: 600px; margin: 0 auto 1.5rem;">
+                        Bring your assessment to the <strong>AI Architecture Lab</strong> to move to the next level, implement AI effectively, and ensure you realize the true value of AI for your organization.
+                    </p>
                     <div class="btn-group">
                         <button class="btn-primary" onclick="downloadPDF()" id="download-btn">
                             Download PDF Report
@@ -1710,6 +1718,9 @@
                             Retake Assessment
                         </button>
                     </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--gray-500);">
+                        Your personalized report is your roadmap to AI success.
+                    </p>
                 </div>
             `;
 
@@ -1963,6 +1974,33 @@
                 yPos += 18;
             });
 
+            // === AI ARCHITECTURE LAB CTA ===
+            checkNewPage(70);
+            yPos += 10;
+
+            // CTA Box
+            pdf.setFillColor(...brandBlue);
+            pdf.roundedRect(margin, yPos, contentWidth, 50, 5, 5, 'F');
+
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Take Your Results to the AI Architecture Lab', margin + 10, yPos + 15);
+
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            const ctaText = pdf.splitTextToSize(
+                'Bring this assessment to the AI Architecture Lab to move to the next level, implement AI effectively, and ensure you realize the true value of AI for your organization.',
+                contentWidth - 20
+            );
+            pdf.text(ctaText, margin + 10, yPos + 25);
+
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Your personalized report is your roadmap to AI success.', margin + 10, yPos + 43);
+
+            yPos += 60;
+
             // === FOOTER ON LAST PAGE ===
             yPos = pageHeight - 30;
             pdf.setDrawColor(200, 200, 200);
@@ -1972,7 +2010,7 @@
             pdf.setTextColor(150, 150, 150);
             pdf.setFontSize(9);
             pdf.setFont('helvetica', 'normal');
-            pdf.text('AI Business Network | SCALE AI Maturity Assessment', pageWidth / 2, yPos, { align: 'center' });
+            pdf.text('AI Business Network | AI Architecture Lab | SCALE AI Maturity Assessment', pageWidth / 2, yPos, { align: 'center' });
             pdf.text('www.aibusinessnetwork.com', pageWidth / 2, yPos + 5, { align: 'center' });
 
             // Save PDF
