@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCALE AI Maturity Assessment | GTM AI Transformation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             /* Brand Colors */
@@ -1701,11 +1703,11 @@
                     <h3>Ready to Accelerate Your AI Transformation?</h3>
                     <p>Get personalized guidance and advanced training to move up the maturity scale faster.</p>
                     <div class="btn-group">
-                        <button class="btn-primary" onclick="window.print()">
-                            📄 Download Report
+                        <button class="btn-primary" onclick="downloadPDF()" id="download-btn">
+                            Download PDF Report
                         </button>
                         <button class="btn-secondary" onclick="restartAssessment()">
-                            ↻ Retake Assessment
+                            Retake Assessment
                         </button>
                     </div>
                 </div>
@@ -1727,6 +1729,257 @@
             updateProgress();
             updateStatusBar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function downloadPDF() {
+            const btn = document.getElementById('download-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating PDF...';
+            btn.disabled = true;
+
+            const scores = calculateScores();
+            const overallMaturity = getMaturityLevel(scores.overall.average);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 20;
+            const contentWidth = pageWidth - (margin * 2);
+            let yPos = margin;
+
+            // Brand colors
+            const brandDark = [10, 6, 25];
+            const brandBlue = [33, 111, 223];
+            const brandPink = [252, 78, 153];
+            const brandCyan = [53, 160, 196];
+            const brandGreen = [87, 236, 153];
+            const brandOrange = [252, 136, 82];
+            const brandYellow = [252, 174, 38];
+
+            const dimensionColors = {
+                strategic: brandBlue,
+                chart: brandPink,
+                align: brandCyan,
+                launch: brandGreen,
+                evolve: brandOrange
+            };
+
+            // Helper function to add new page if needed
+            function checkNewPage(requiredSpace) {
+                if (yPos + requiredSpace > pageHeight - margin) {
+                    pdf.addPage();
+                    yPos = margin;
+                    return true;
+                }
+                return false;
+            }
+
+            // === HEADER SECTION ===
+            pdf.setFillColor(...brandDark);
+            pdf.rect(0, 0, pageWidth, 60, 'F');
+
+            // Title
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(24);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('SCALE AI Maturity Assessment', pageWidth / 2, 25, { align: 'center' });
+
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('AI Business Network | GTM AI Transformation Framework', pageWidth / 2, 35, { align: 'center' });
+
+            // Date
+            pdf.setFontSize(10);
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            pdf.text(`Generated: ${today}`, pageWidth / 2, 50, { align: 'center' });
+
+            yPos = 75;
+
+            // === OVERALL SCORE SECTION ===
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Overall Assessment Results', margin, yPos);
+            yPos += 15;
+
+            // Score box
+            pdf.setFillColor(...brandBlue);
+            pdf.roundedRect(margin, yPos, 50, 50, 5, 5, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(28);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(scores.overall.average.toFixed(1), margin + 25, yPos + 28, { align: 'center' });
+            pdf.setFontSize(10);
+            pdf.text('out of 5.0', margin + 25, yPos + 40, { align: 'center' });
+
+            // Maturity level info
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Level ${overallMaturity.level}: ${overallMaturity.name}`, margin + 60, yPos + 15);
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(100, 100, 100);
+            const descLines = pdf.splitTextToSize(overallMaturity.description, contentWidth - 70);
+            pdf.text(descLines, margin + 60, yPos + 25);
+
+            yPos += 65;
+
+            // === SCALE DIMENSION BREAKDOWN ===
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Dimension Breakdown', margin, yPos);
+            yPos += 12;
+
+            // Dimension scores bar chart
+            assessmentData.dimensions.forEach((dimension, index) => {
+                checkNewPage(25);
+                const score = scores[dimension.id];
+                const barWidth = (score.average / 5) * (contentWidth - 50);
+                const color = dimensionColors[dimension.id];
+
+                // Label
+                pdf.setFontSize(11);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(...brandDark);
+                pdf.text(`${dimension.letter} - ${dimension.name}`, margin, yPos);
+
+                // Score
+                pdf.setTextColor(...color);
+                pdf.text(score.average.toFixed(1), pageWidth - margin, yPos, { align: 'right' });
+
+                yPos += 5;
+
+                // Background bar
+                pdf.setFillColor(230, 230, 230);
+                pdf.roundedRect(margin, yPos, contentWidth - 30, 6, 2, 2, 'F');
+
+                // Score bar
+                pdf.setFillColor(...color);
+                pdf.roundedRect(margin, yPos, barWidth, 6, 2, 2, 'F');
+
+                yPos += 15;
+            });
+
+            yPos += 10;
+
+            // === DETAILED RESULTS PER DIMENSION ===
+            pdf.addPage();
+            yPos = margin;
+
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Detailed Results & Recommendations', margin, yPos);
+            yPos += 15;
+
+            assessmentData.dimensions.forEach((dimension, index) => {
+                checkNewPage(80);
+
+                const score = scores[dimension.id];
+                const maturity = getMaturityLevel(score.average);
+                const recommendations = getRecommendations(dimension.id, score.average);
+                const color = dimensionColors[dimension.id];
+
+                // Dimension header with colored bar
+                pdf.setFillColor(...color);
+                pdf.rect(margin, yPos, 4, 25, 'F');
+
+                pdf.setTextColor(...brandDark);
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(`${dimension.letter} - ${dimension.name}`, margin + 10, yPos + 8);
+
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(dimension.tagline, margin + 10, yPos + 16);
+
+                // Score badge
+                pdf.setFillColor(...color);
+                pdf.roundedRect(pageWidth - margin - 25, yPos + 2, 25, 12, 3, 3, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(11);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(score.average.toFixed(1), pageWidth - margin - 12.5, yPos + 10, { align: 'center' });
+
+                yPos += 30;
+
+                // Maturity level
+                pdf.setTextColor(...brandDark);
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(`Maturity Level: ${maturity.name}`, margin, yPos);
+                yPos += 8;
+
+                // Recommendations
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Recommended Next Steps:', margin, yPos);
+                yPos += 6;
+
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(60, 60, 60);
+                recommendations.forEach((rec, i) => {
+                    checkNewPage(15);
+                    const recLines = pdf.splitTextToSize(`${i + 1}. ${rec}`, contentWidth - 10);
+                    pdf.text(recLines, margin + 5, yPos);
+                    yPos += recLines.length * 5 + 3;
+                });
+
+                yPos += 10;
+            });
+
+            // === MATURITY LEVELS REFERENCE ===
+            checkNewPage(80);
+            yPos += 5;
+
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('SCALE Maturity Levels Reference', margin, yPos);
+            yPos += 10;
+
+            const maturityLevels = [
+                { level: 1, name: 'Experimenting', desc: 'Ad-hoc AI exploration without strategic direction', color: brandPink },
+                { level: 2, name: 'Exploring', desc: 'Beginning to identify AI opportunities with emerging structure', color: brandOrange },
+                { level: 3, name: 'Establishing', desc: 'Structured approach emerging with defined processes', color: brandYellow },
+                { level: 4, name: 'Executing', desc: 'Systematic implementation with measurable outcomes', color: brandCyan },
+                { level: 5, name: 'Scaling', desc: 'Enterprise-wide AI integration with continuous improvement', color: brandGreen }
+            ];
+
+            maturityLevels.forEach(level => {
+                checkNewPage(15);
+                pdf.setFillColor(...level.color);
+                pdf.circle(margin + 5, yPos + 3, 4, 'F');
+                pdf.setTextColor(...brandDark);
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(`Level ${level.level}: ${level.name}`, margin + 15, yPos + 5);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(level.desc, margin + 15, yPos + 11);
+                yPos += 18;
+            });
+
+            // === FOOTER ON LAST PAGE ===
+            yPos = pageHeight - 30;
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(margin, yPos, pageWidth - margin, yPos);
+            yPos += 8;
+
+            pdf.setTextColor(150, 150, 150);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('AI Business Network | SCALE AI Maturity Assessment', pageWidth / 2, yPos, { align: 'center' });
+            pdf.text('www.aibusinessnetwork.com', pageWidth / 2, yPos + 5, { align: 'center' });
+
+            // Save PDF
+            pdf.save('SCALE-AI-Maturity-Assessment-Results.pdf');
+
+            btn.textContent = originalText;
+            btn.disabled = false;
         }
 
         // Initialize on load
