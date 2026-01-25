@@ -126,11 +126,118 @@
             width: 0%;
         }
 
+        /* Status Bar */
+        .status-bar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background: var(--brand-white);
+            border-bottom: 1px solid var(--gray-200);
+            z-index: 98;
+            padding: 0.75rem 0;
+            display: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-bar.visible {
+            display: block;
+        }
+
+        .status-bar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-dimensions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .status-dimension {
+            width: 36px;
+            height: 36px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            background: var(--gray-100);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .status-dimension.completed {
+            background: var(--brand-green);
+            color: white;
+        }
+
+        .status-dimension.active {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            background: rgba(33, 111, 223, 0.1);
+        }
+
+        .status-dimension.s.active { border-color: #216fdf; color: #216fdf; background: rgba(33, 111, 223, 0.1); }
+        .status-dimension.c.active { border-color: #fc4e99; color: #fc4e99; background: rgba(252, 78, 153, 0.1); }
+        .status-dimension.a.active { border-color: #35a0c4; color: #35a0c4; background: rgba(53, 160, 196, 0.1); }
+        .status-dimension.l.active { border-color: #57ec99; color: #3dc97a; background: rgba(87, 236, 153, 0.1); }
+        .status-dimension.e.active { border-color: #fc8852; color: #fc8852; background: rgba(252, 136, 82, 0.1); }
+
+        .status-dimension.s.completed { background: linear-gradient(135deg, #216fdf, #1a5abd); }
+        .status-dimension.c.completed { background: linear-gradient(135deg, #fc4e99, #d43d7d); }
+        .status-dimension.a.completed { background: linear-gradient(135deg, #35a0c4, #39b6ba); }
+        .status-dimension.l.completed { background: linear-gradient(135deg, #57ec99, #3dc97a); }
+        .status-dimension.e.completed { background: linear-gradient(135deg, #fc8852, #fcae26); }
+
+        .status-connector {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-200);
+            transition: background 0.3s ease;
+        }
+
+        .status-connector.completed {
+            background: var(--brand-green);
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .status-text strong {
+            color: var(--gray-800);
+        }
+
+        .status-percentage {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-blue);
+        }
+
         /* Main Container */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 100px 1.5rem 3rem;
+        }
+
+        .container.with-status-bar {
+            padding-top: 160px;
         }
 
         /* Welcome Screen */
@@ -773,7 +880,30 @@
         <div class="progress-bar" id="progress-bar"></div>
     </div>
 
-    <div class="container">
+    <div class="status-bar" id="status-bar">
+        <div class="status-bar-content">
+            <div class="status-dimensions">
+                <div class="status-dimension s" id="status-s" title="Strategic Outcomes">S</div>
+                <div class="status-connector" id="connector-1"></div>
+                <div class="status-dimension c" id="status-c" title="Chart Friction">C</div>
+                <div class="status-connector" id="connector-2"></div>
+                <div class="status-dimension a" id="status-a" title="Align Capabilities">A</div>
+                <div class="status-connector" id="connector-3"></div>
+                <div class="status-dimension l" id="status-l" title="Launch with Control">L</div>
+                <div class="status-connector" id="connector-4"></div>
+                <div class="status-dimension e" id="status-e" title="Evolve & Expand">E</div>
+            </div>
+            <div class="status-info">
+                <div class="status-text">
+                    <span id="status-dimension-name">Strategic Outcomes</span> &bull;
+                    <strong id="status-question-count">0/5</strong> questions
+                </div>
+                <div class="status-percentage" id="status-percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-container">
         <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcome-screen">
             <img src="logo-light.png" alt="AI Business Network" style="height: 120px; width: auto; margin-bottom: 1.5rem;">
@@ -1154,13 +1284,17 @@
         // Initialize
         function init() {
             updateProgress();
+            updateStatusBar();
         }
 
         function startAssessment() {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('assessment-screen').style.display = 'block';
+            document.getElementById('status-bar').classList.add('visible');
+            document.getElementById('main-container').classList.add('with-status-bar');
             renderDimension(0);
             updateProgress();
+            updateStatusBar();
         }
 
         function renderDimension(index) {
@@ -1267,6 +1401,51 @@
 
             document.getElementById('progress-bar').style.width = `${progress}%`;
             document.getElementById('progress-text').textContent = `${answeredCount}/${totalQuestions} questions`;
+
+            updateStatusBar();
+        }
+
+        function updateStatusBar() {
+            const dimensionLetters = ['s', 'c', 'a', 'l', 'e'];
+            const dimensionNames = ['Strategic Outcomes', 'Chart Friction', 'Align Capabilities', 'Launch with Control', 'Evolve & Expand'];
+
+            // Update dimension indicators
+            dimensionLetters.forEach((letter, index) => {
+                const el = document.getElementById(`status-${letter}`);
+                const dimension = assessmentData.dimensions[index];
+                const answeredInDimension = dimension.questions.filter(q => answers[q.id] !== undefined).length;
+
+                el.classList.remove('active', 'completed');
+
+                if (index < currentDimension) {
+                    el.classList.add('completed');
+                } else if (index === currentDimension) {
+                    el.classList.add('active');
+                }
+
+                // Update connectors
+                if (index < 4) {
+                    const connector = document.getElementById(`connector-${index + 1}`);
+                    if (index < currentDimension) {
+                        connector.classList.add('completed');
+                    } else {
+                        connector.classList.remove('completed');
+                    }
+                }
+            });
+
+            // Update status text
+            const currentDim = assessmentData.dimensions[currentDimension];
+            if (currentDim) {
+                const answeredInCurrent = currentDim.questions.filter(q => answers[q.id] !== undefined).length;
+                document.getElementById('status-dimension-name').textContent = dimensionNames[currentDimension];
+                document.getElementById('status-question-count').textContent = `${answeredInCurrent}/5`;
+            }
+
+            // Update percentage
+            const totalAnswered = Object.keys(answers).length;
+            const percentage = Math.round((totalAnswered / 25) * 100);
+            document.getElementById('status-percentage').textContent = `${percentage}%`;
         }
 
         function calculateScores() {
@@ -1403,6 +1582,8 @@
         function showResults() {
             document.getElementById('assessment-screen').style.display = 'none';
             document.getElementById('results-screen').style.display = 'block';
+            document.getElementById('status-bar').classList.remove('visible');
+            document.getElementById('main-container').classList.remove('with-status-bar');
 
             const scores = calculateScores();
             const overallMaturity = getMaturityLevel(scores.overall.average);
@@ -1541,7 +1722,10 @@
             currentDimension = 0;
             document.getElementById('results-screen').style.display = 'none';
             document.getElementById('welcome-screen').style.display = 'block';
+            document.getElementById('status-bar').classList.remove('visible');
+            document.getElementById('main-container').classList.remove('with-status-bar');
             updateProgress();
+            updateStatusBar();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
