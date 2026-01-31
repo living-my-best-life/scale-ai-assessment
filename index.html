@@ -2165,9 +2165,7 @@
 
                 <!-- Executive Summary -->
                 <div class="result-card animate-in" style="margin-top: 1.5rem; border-left: 4px solid ${bandInfo.color};">
-                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.5rem;">📊</span> Your AI Maturity Analysis
-                    </h3>
+                    <h3 style="margin-bottom: 1rem;">Your AI Maturity Analysis</h3>
                     <p style="color: var(--gray-700); line-height: 1.7; margin-bottom: 1rem;">
                         ${summary.paragraph1}
                     </p>
@@ -2179,7 +2177,7 @@
                 <!-- Risk of Inaction -->
                 <div class="result-card animate-in" style="margin-top: 1.5rem; background: linear-gradient(135deg, ${bandInfo.color}08, ${bandInfo.color}15); border: 1px solid ${bandInfo.color}30;">
                     <h3 style="margin-bottom: 1rem; color: ${bandInfo.color}; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.5rem;">⚠️</span> ${risks.title}
+${risks.title}
                     </h3>
                     <p style="font-weight: 600; color: var(--gray-700); margin-bottom: 0.75rem;">What happens if you don't act:</p>
                     <ul style="margin: 0; padding-left: 1.25rem; color: var(--gray-600);">
@@ -2231,56 +2229,7 @@
 
             html += `</div>`;
 
-            // Action Plan
-            const weakestDimensions = Object.entries(scores)
-                .filter(([key]) => key !== 'overall')
-                .sort((a, b) => a[1].average - b[1].average)
-                .slice(0, 3);
-
             html += `
-                <div class="action-plan animate-in">
-                    <h3>📋 Your 30-Day Action Plan</h3>
-                    <p style="color: var(--gray-600); margin-bottom: 1.5rem;">
-                        Based on your results, focus on these priority areas:
-                    </p>
-                    <div class="action-steps">
-            `;
-
-            const actionSteps = [
-                {
-                    title: 'Week 1: Foundation',
-                    description: `Focus on ${assessmentData.dimensions.find(d => d.id === weakestDimensions[0][0]).name}. ${getRecommendations(weakestDimensions[0][0], weakestDimensions[0][1].average)[0]}.`
-                },
-                {
-                    title: 'Week 2: Build Momentum',
-                    description: `Continue building ${assessmentData.dimensions.find(d => d.id === weakestDimensions[0][0]).name} capabilities while starting to address ${assessmentData.dimensions.find(d => d.id === weakestDimensions[1][0]).name}.`
-                },
-                {
-                    title: 'Week 3: Expand',
-                    description: `Implement structured approaches across your top 2 priority areas. Begin pilot planning if you haven't already.`
-                },
-                {
-                    title: 'Week 4: Measure & Iterate',
-                    description: `Review progress, document learnings, and set targets for the next 30-day cycle.`
-                }
-            ];
-
-            actionSteps.forEach((step, index) => {
-                html += `
-                    <div class="action-step">
-                        <div class="step-number">${index + 1}</div>
-                        <div class="step-content">
-                            <h5>${step.title}</h5>
-                            <p>${step.description}</p>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `
-                    </div>
-                </div>
-
                 <div class="cta-section animate-in" style="background: linear-gradient(135deg, ${bandInfo.color}10, ${bandInfo.color}20);">
                     <h3>Don't Let These Insights Go to Waste</h3>
                     <p style="max-width: 600px; margin: 0 auto 1.5rem;">
@@ -2466,7 +2415,7 @@
             pdf.setTextColor(...bandColors[band]);
             pdf.setFontSize(11);
             pdf.setFont('helvetica', 'bold');
-            pdf.text(`⚠ ${risks.title}`, margin + 10, yPos + 10);
+            pdf.text(risks.title, margin + 10, yPos + 10);
 
             pdf.setTextColor(80, 80, 80);
             pdf.setFontSize(9);
