@@ -277,28 +277,32 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 120px 1.5rem 3rem;
+            padding: 90px 1.5rem 2rem;
         }
 
         .container.with-status-bar {
-            padding-top: 180px;
+            padding-top: 150px;
         }
 
-        /* Welcome Screen */
+        /* Welcome Screen - Compact to fit above fold */
         .welcome-screen {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 2rem 2rem;
             background: white;
             border-radius: 1.5rem;
             box-shadow: var(--shadow-xl);
-            margin-top: 2rem;
+            margin-top: 1rem;
+            min-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .welcome-screen h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             color: var(--gray-900);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
         }
 
@@ -310,40 +314,46 @@
         }
 
         .welcome-screen p {
-            font-size: 1.125rem;
+            font-size: 1rem;
             color: var(--gray-600);
-            max-width: 600px;
-            margin: 0 auto 2rem;
+            max-width: 550px;
+            margin: 0 auto 1rem;
+        }
+
+        .welcome-logo {
+            height: 80px;
+            width: auto;
+            margin-bottom: 1rem;
         }
 
         .scale-preview {
             display: flex;
             justify-content: center;
-            gap: 0.75rem;
-            margin: 2.5rem 0;
+            gap: 0.5rem;
+            margin: 1.25rem 0;
             flex-wrap: wrap;
         }
 
         .scale-letter {
-            width: 70px;
-            height: 70px;
-            border-radius: 1rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: white;
             transition: transform 0.3s ease;
         }
 
         .scale-letter:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
         }
 
         .scale-letter span {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -357,29 +367,28 @@
         .letter-e { background: linear-gradient(135deg, #fc8852, #fcae26); }
 
         .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin: 2.5rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.25rem 0;
             text-align: center;
         }
 
         .stat-item {
-            padding: 1.5rem;
-            background: var(--gray-50);
-            border-radius: 1rem;
+            padding: 0;
+            background: transparent;
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--primary);
         }
 
         .stat-label {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: var(--gray-600);
-            margin-top: 0.25rem;
+            margin-top: 0.125rem;
         }
 
         .btn-primary {
@@ -1000,7 +1009,13 @@
             }
 
             .welcome-screen {
-                padding: 2rem 1rem;
+                padding: 1.5rem 1rem;
+                min-height: calc(100vh - 120px);
+            }
+
+            .welcome-logo {
+                height: 60px;
+                margin-bottom: 0.75rem;
             }
 
             .welcome-screen h1 {
@@ -1008,31 +1023,38 @@
             }
 
             .welcome-screen p {
-                font-size: 1rem;
+                font-size: 0.9rem;
+                margin-bottom: 0.75rem;
             }
 
             .scale-letter {
-                width: 48px;
-                height: 48px;
+                width: 44px;
+                height: 44px;
                 font-size: 1rem;
-                border-radius: 0.75rem;
+                border-radius: 0.5rem;
             }
 
             .scale-letter span {
-                font-size: 0.5rem;
+                font-size: 0.45rem;
+            }
+
+            .scale-preview {
+                margin: 1rem 0;
+                gap: 0.35rem;
             }
 
             .stat-grid {
-                grid-template-columns: 1fr;
+                flex-direction: row;
                 gap: 1rem;
-            }
-
-            .stat-item {
-                padding: 1rem;
+                margin: 1rem 0;
             }
 
             .stat-number {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
+            }
+
+            .stat-label {
+                font-size: 0.65rem;
             }
 
             .btn-primary {
@@ -1326,9 +1348,9 @@
         <div id="main-content"></div>
         <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title">
-            <img src="logo-light.png" alt="AI Business Network" style="height: 120px; width: auto; margin-bottom: 1.5rem;">
+            <img src="logo-light.png" alt="AI Business Network" class="welcome-logo">
             <h1 id="welcome-title">Assess Your <span>AI Maturity</span></h1>
-            <p>Discover where you stand on your AI transformation journey using the proven SCALE framework. Get personalized recommendations to accelerate your growth.</p>
+            <p>Discover where you stand using the SCALE framework and get personalized recommendations.</p>
 
             <div class="scale-preview">
                 <div class="scale-letter letter-s">S<span>Strategic</span></div>
@@ -1341,7 +1363,7 @@
             <div class="stat-grid">
                 <div class="stat-item">
                     <div class="stat-number">73%</div>
-                    <div class="stat-label">of AI initiatives fail to scale</div>
+                    <div class="stat-label">of AI initiatives fail</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">4.3x</div>
@@ -1349,19 +1371,13 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">~2 min</div>
-                    <div class="stat-label">15 strategic questions</div>
+                    <div class="stat-label">15 questions</div>
                 </div>
             </div>
 
             <button class="btn-primary" onclick="startAssessment()">
                 Start Your Assessment →
             </button>
-
-            <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
-                <p style="font-size: 0.95rem; color: var(--gray-600); max-width: 550px; margin: 0 auto;">
-                    <strong style="color: var(--brand-blue);">Bring your results to the AI Architecture Lab</strong> to move to the next level, implement effectively, and ensure you realize the true value of AI.
-                </p>
-            </div>
         </div>
 
         <!-- Assessment Screen -->
@@ -1723,11 +1739,11 @@
 
             html += `
                 <div class="navigation-buttons">
-                    <button class="btn-nav btn-back" onclick="previousDimension()" ${index === 0 ? 'style="visibility: hidden;"' : ''}>
-                        ← Previous
+                    <button class="btn-nav btn-back" onclick="previousDimension()">
+                        ← ${index === 0 ? 'Back' : 'Previous'}
                     </button>
                     <button class="btn-nav btn-next" onclick="nextDimension()" id="next-btn">
-                        ${index === 4 ? 'View Results' : 'Next Dimension'} →
+                        ${index === 4 ? 'View Results' : 'Next'} →
                     </button>
                 </div>
             `;
@@ -1856,7 +1872,18 @@
         function previousDimension() {
             if (currentDimension > 0) {
                 renderDimension(currentDimension - 1);
+            } else {
+                // Go back to welcome screen from first dimension
+                goToWelcome();
             }
+        }
+
+        function goToWelcome() {
+            document.getElementById('assessment-screen').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'block';
+            document.getElementById('status-bar').classList.remove('visible');
+            document.getElementById('main-container').classList.remove('with-status-bar');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function nextDimension() {
