@@ -1315,7 +1315,7 @@
             <div class="status-info">
                 <div class="status-text">
                     <span id="status-dimension-name">Strategic Outcomes</span> &bull;
-                    <strong id="status-question-count">0/5</strong> questions
+                    <strong id="status-question-count">0/3</strong> questions
                 </div>
                 <div class="status-percentage" id="status-percentage">0%</div>
             </div>
@@ -1348,8 +1348,8 @@
                     <div class="stat-label">higher success with SCALE</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">25</div>
-                    <div class="stat-label">questions across 5 dimensions</div>
+                    <div class="stat-number">~2 min</div>
+                    <div class="stat-label">15 strategic questions</div>
                 </div>
             </div>
 
@@ -1375,7 +1375,74 @@
     <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <script>
-        // Assessment Data
+        // Maturity level labels
+        const maturityLabels = {
+            1: { name: 'Ad Hoc', color: '#fc4e99' },
+            2: { name: 'Exploring', color: '#fc8852' },
+            3: { name: 'Establishing', color: '#fcae26' },
+            4: { name: 'Executing', color: '#35a0c4' },
+            5: { name: 'Scaling', color: '#57ec99' }
+        };
+
+        // Score band definitions
+        const scoreBands = {
+            atRisk: { min: 1.0, max: 1.9, name: 'At Risk', color: '#fc4e99', description: 'Critical gaps that threaten AI success' },
+            emerging: { min: 2.0, max: 2.9, name: 'Emerging', color: '#fc8852', description: 'Foundation forming, but significant gaps remain' },
+            developing: { min: 3.0, max: 3.9, name: 'Developing', color: '#fcae26', description: 'On the right track, but not yet competitive' },
+            advanced: { min: 4.0, max: 4.5, name: 'Advanced', color: '#35a0c4', description: 'Strong position, ready to accelerate' },
+            leading: { min: 4.6, max: 5.0, name: 'Leading', color: '#57ec99', description: 'Top-tier maturity, focus on optimization' }
+        };
+
+        // Risk of inaction messaging
+        const riskOfInaction = {
+            atRisk: {
+                title: 'Critical: Act Now',
+                risks: [
+                    'AI projects fail at 3x the industry average rate',
+                    'Best talent leaves for AI-forward competitors',
+                    'Technical debt compounds as ad-hoc solutions proliferate',
+                    'Within 12-18 months, competitors using AI will have 20-40% efficiency advantages'
+                ]
+            },
+            emerging: {
+                title: 'Warning: Stall Risk',
+                risks: [
+                    'Pilots don\'t translate to production value',
+                    '"AI fatigue" sets in as initiatives stall without clear wins',
+                    'Budget gets reallocated away from AI after failed experiments',
+                    'Leadership loses confidence, creating a 2-3 year setback'
+                ]
+            },
+            developing: {
+                title: 'Caution: Scaling Gaps',
+                risks: [
+                    'Good work stays siloed and can\'t scale across the organization',
+                    'Governance gaps create compliance and security risks',
+                    'First-mover advantage window is closing',
+                    'Organization becomes a "fast follower" instead of a leader'
+                ]
+            },
+            advanced: {
+                title: 'Maintain Momentum',
+                risks: [
+                    'Without continuous evolution, today\'s advantage becomes tomorrow\'s baseline',
+                    'Competitors catch up within 18-24 months',
+                    'Technical solutions age without refresh cycles',
+                    'Innovation culture can plateau without new challenges'
+                ]
+            },
+            leading: {
+                title: 'Stay Ahead',
+                risks: [
+                    'Market leadership requires continuous reinvention',
+                    'Emerging technologies may disrupt current advantages',
+                    'Talent retention requires cutting-edge challenges',
+                    'Complacency is the biggest risk at the top'
+                ]
+            }
+        };
+
+        // Assessment Data - Reduced to 3 questions per dimension
         const assessmentData = {
             dimensions: [
                 {
@@ -1390,55 +1457,33 @@
                             id: 's1',
                             text: 'How clearly defined are your AI-related business objectives?',
                             options: [
-                                { level: 1, text: 'We have no specific AI objectives defined' },
-                                { level: 2, text: 'We have vague goals like "use AI to improve efficiency"' },
-                                { level: 3, text: 'We have general objectives tied to business areas (e.g., improve sales)' },
-                                { level: 4, text: 'We have specific, measurable objectives (e.g., increase win rate by 15%)' },
-                                { level: 5, text: 'We have quantified objectives with baselines, targets, and timelines' }
+                                { level: 1, text: 'No specific AI objectives defined' },
+                                { level: 2, text: 'Vague goals like "use AI to improve efficiency"' },
+                                { level: 3, text: 'General objectives tied to business areas' },
+                                { level: 4, text: 'Specific, measurable objectives with targets' },
+                                { level: 5, text: 'Quantified objectives with baselines, targets, and timelines' }
                             ]
                         },
                         {
                             id: 's2',
-                            text: 'How do you identify opportunities for AI implementation?',
+                            text: 'How do you measure success for AI initiatives?',
                             options: [
-                                { level: 1, text: 'We react to vendor pitches or industry buzz' },
-                                { level: 2, text: 'Individual teams experiment with AI tools independently' },
-                                { level: 3, text: 'We evaluate AI based on competitor activity' },
-                                { level: 4, text: 'We systematically identify gaps and match AI solutions to them' },
-                                { level: 5, text: 'We use structured frameworks (like 5 Whys) to find root causes and strategic AI fits' }
+                                { level: 1, text: 'No defined metrics for AI success' },
+                                { level: 2, text: 'Track adoption/usage but not outcomes' },
+                                { level: 3, text: 'Some business metrics but inconsistent tracking' },
+                                { level: 4, text: 'Track both process metrics and business outcomes' },
+                                { level: 5, text: 'Comprehensive measurement with baselines and attribution' }
                             ]
                         },
                         {
                             id: 's3',
-                            text: 'How well do you understand the root causes of business challenges before applying AI?',
-                            options: [
-                                { level: 1, text: 'We apply AI to surface-level symptoms without deeper analysis' },
-                                { level: 2, text: 'We sometimes investigate causes but often jump to solutions' },
-                                { level: 3, text: 'We analyze problems but don\'t have a consistent methodology' },
-                                { level: 4, text: 'We use structured analysis to understand gaps before selecting AI' },
-                                { level: 5, text: 'We rigorously apply root cause analysis and categorize gaps (Skills, Systems, Strategy, Product)' }
-                            ]
-                        },
-                        {
-                            id: 's4',
-                            text: 'How do you measure success for AI initiatives?',
-                            options: [
-                                { level: 1, text: 'We don\'t have defined metrics for AI success' },
-                                { level: 2, text: 'We track adoption/usage but not business outcomes' },
-                                { level: 3, text: 'We have some business metrics but inconsistent tracking' },
-                                { level: 4, text: 'We track both process metrics and business outcomes' },
-                                { level: 5, text: 'We have comprehensive measurement with baselines, targets, and attribution' }
-                            ]
-                        },
-                        {
-                            id: 's5',
                             text: 'How connected are your AI initiatives to revenue and growth goals?',
                             options: [
-                                { level: 1, text: 'AI initiatives are treated as cost-center experiments' },
-                                { level: 2, text: 'Some initiatives have loose connections to business goals' },
-                                { level: 3, text: 'Most initiatives are tied to departmental objectives' },
-                                { level: 4, text: 'AI initiatives directly support strategic revenue goals' },
-                                { level: 5, text: 'All AI initiatives have clear ROI projections and executive sponsorship' }
+                                { level: 1, text: 'AI is treated as a cost-center experiment' },
+                                { level: 2, text: 'Loose connections to business goals' },
+                                { level: 3, text: 'Tied to departmental objectives' },
+                                { level: 4, text: 'Directly support strategic revenue goals' },
+                                { level: 5, text: 'Clear ROI projections with executive sponsorship' }
                             ]
                         }
                     ]
@@ -1455,55 +1500,33 @@
                             id: 'c1',
                             text: 'How well have you mapped your current workflows and processes?',
                             options: [
-                                { level: 1, text: 'We don\'t have documented workflow maps' },
-                                { level: 2, text: 'Some processes are documented but most are tribal knowledge' },
-                                { level: 3, text: 'Key workflows are documented but not regularly updated' },
-                                { level: 4, text: 'We have comprehensive process maps with handoff points identified' },
-                                { level: 5, text: 'We have dynamic process maps that identify people, systems, and friction points' }
+                                { level: 1, text: 'No documented workflow maps' },
+                                { level: 2, text: 'Some documented, most are tribal knowledge' },
+                                { level: 3, text: 'Key workflows documented but not updated' },
+                                { level: 4, text: 'Comprehensive maps with handoff points' },
+                                { level: 5, text: 'Dynamic maps identifying people, systems, and friction' }
                             ]
                         },
                         {
                             id: 'c2',
                             text: 'How well do you understand where friction exists in your GTM processes?',
                             options: [
-                                { level: 1, text: 'We haven\'t analyzed process friction points' },
-                                { level: 2, text: 'We know anecdotally where problems occur' },
-                                { level: 3, text: 'We have identified major bottlenecks but lack quantification' },
-                                { level: 4, text: 'We have quantified friction costs (time, revenue impact)' },
-                                { level: 5, text: 'We continuously measure human and data friction with business impact scores' }
+                                { level: 1, text: 'Haven\'t analyzed friction points' },
+                                { level: 2, text: 'Know anecdotally where problems occur' },
+                                { level: 3, text: 'Identified bottlenecks but lack quantification' },
+                                { level: 4, text: 'Quantified friction costs (time, revenue impact)' },
+                                { level: 5, text: 'Continuously measure friction with business impact scores' }
                             ]
                         },
                         {
                             id: 'c3',
                             text: 'What is the state of your data infrastructure for AI?',
                             options: [
-                                { level: 1, text: 'Data is siloed across systems with no unified view' },
-                                { level: 2, text: 'Some data integration exists but quality is inconsistent' },
-                                { level: 3, text: 'We have a data warehouse but limited real-time access' },
-                                { level: 4, text: 'We have good data quality with integration across key systems' },
-                                { level: 5, text: 'We have a modern data stack with unified catalog and strong governance' }
-                            ]
-                        },
-                        {
-                            id: 'c4',
-                            text: 'How ready are your systems for AI integration?',
-                            options: [
-                                { level: 1, text: 'Our systems lack APIs and integration capabilities' },
-                                { level: 2, text: 'Limited API access with manual data transfers' },
-                                { level: 3, text: 'Key systems have APIs but integration is complex' },
-                                { level: 4, text: 'Most systems are API-enabled with standard integrations' },
-                                { level: 5, text: 'Full API ecosystem with automated workflows and real-time sync' }
-                            ]
-                        },
-                        {
-                            id: 'c5',
-                            text: 'How do you prioritize which processes to apply AI to?',
-                            options: [
-                                { level: 1, text: 'No systematic prioritization - we try things randomly' },
-                                { level: 2, text: 'We prioritize based on what seems easiest' },
-                                { level: 3, text: 'We consider impact but don\'t assess feasibility well' },
-                                { level: 4, text: 'We use an impact vs. feasibility matrix for prioritization' },
-                                { level: 5, text: 'We have a scoring system combining business impact, feasibility, and strategic fit' }
+                                { level: 1, text: 'Data siloed with no unified view' },
+                                { level: 2, text: 'Some integration but quality is inconsistent' },
+                                { level: 3, text: 'Data warehouse but limited real-time access' },
+                                { level: 4, text: 'Good quality with integration across key systems' },
+                                { level: 5, text: 'Modern data stack with unified catalog and governance' }
                             ]
                         }
                     ]
@@ -1518,57 +1541,35 @@
                     questions: [
                         {
                             id: 'a1',
-                            text: 'How well does your team understand different AI capabilities (classification, generation, extraction, etc.)?',
+                            text: 'How well does your team understand different AI capabilities?',
                             options: [
-                                { level: 1, text: 'Limited understanding - AI is seen as one general thing' },
+                                { level: 1, text: 'Limited understanding - AI seen as one thing' },
                                 { level: 2, text: 'Some awareness of generative AI vs. analytics' },
-                                { level: 3, text: 'Understand major capability categories but not how to apply them' },
-                                { level: 4, text: 'Can match specific AI capabilities to business problems' },
-                                { level: 5, text: 'Expert-level capability mapping with vendor landscape knowledge' }
+                                { level: 3, text: 'Understand categories but not how to apply them' },
+                                { level: 4, text: 'Can match AI capabilities to business problems' },
+                                { level: 5, text: 'Expert capability mapping with vendor landscape knowledge' }
                             ]
                         },
                         {
                             id: 'a2',
-                            text: 'How do you approach selecting AI tools and vendors?',
+                            text: 'How do you approach build vs. buy decisions for AI?',
                             options: [
-                                { level: 1, text: 'We pick tools based on marketing or recommendations' },
-                                { level: 2, text: 'We evaluate based on features and price' },
-                                { level: 3, text: 'We have evaluation criteria but inconsistent application' },
-                                { level: 4, text: 'We use structured evaluation (features, fit, security, scale)' },
-                                { level: 5, text: 'We have a formal vendor evaluation framework with weighted criteria' }
+                                { level: 1, text: 'No framework - decisions are ad-hoc' },
+                                { level: 2, text: 'Default to buying or building without analysis' },
+                                { level: 3, text: 'Consider basic factors but lack rigor' },
+                                { level: 4, text: 'Evaluate strategic value, resources, and TCO' },
+                                { level: 5, text: 'Weighted scoring system for build/buy/hybrid' }
                             ]
                         },
                         {
                             id: 'a3',
-                            text: 'How mature is your team\'s AI prompting and interaction skills?',
-                            options: [
-                                { level: 1, text: 'No formal training - people figure it out on their own' },
-                                { level: 2, text: 'Basic awareness but inconsistent prompt quality' },
-                                { level: 3, text: 'Some team members are skilled; others struggle' },
-                                { level: 4, text: 'We use structured frameworks (like GRACE) for prompting' },
-                                { level: 5, text: 'Organization-wide prompt excellence with shared libraries and best practices' }
-                            ]
-                        },
-                        {
-                            id: 'a4',
-                            text: 'How do you approach build vs. buy decisions for AI?',
-                            options: [
-                                { level: 1, text: 'We don\'t have a framework - decisions are ad-hoc' },
-                                { level: 2, text: 'We default to buying or building without analysis' },
-                                { level: 3, text: 'We consider basic factors but lack rigor' },
-                                { level: 4, text: 'We evaluate based on strategic value, resources, and TCO' },
-                                { level: 5, text: 'We have a weighted scoring system for build/buy/hybrid decisions' }
-                            ]
-                        },
-                        {
-                            id: 'a5',
                             text: 'How ready is your organization culturally for AI adoption?',
                             options: [
                                 { level: 1, text: 'Significant resistance or fear about AI' },
                                 { level: 2, text: 'Mixed feelings - some enthusiastic, many skeptical' },
                                 { level: 3, text: 'Generally open but lacking skills and confidence' },
-                                { level: 4, text: 'Strong interest with active learning and experimentation' },
-                                { level: 5, text: 'AI-first culture with executive sponsorship and enablement programs' }
+                                { level: 4, text: 'Strong interest with active experimentation' },
+                                { level: 5, text: 'AI-first culture with executive sponsorship' }
                             ]
                         }
                     ]
@@ -1585,55 +1586,33 @@
                             id: 'l1',
                             text: 'How do you approach AI pilots and initial implementations?',
                             options: [
-                                { level: 1, text: 'We deploy broadly without piloting' },
+                                { level: 1, text: 'Deploy broadly without piloting' },
                                 { level: 2, text: 'Informal testing by interested individuals' },
-                                { level: 3, text: 'We pilot but without structured success criteria' },
-                                { level: 4, text: 'Structured pilots with defined scope, team, and metrics' },
-                                { level: 5, text: 'Hypothesis-driven pilots with tiger teams and executive sponsorship' }
+                                { level: 3, text: 'Pilot but without structured success criteria' },
+                                { level: 4, text: 'Structured pilots with defined scope and metrics' },
+                                { level: 5, text: 'Hypothesis-driven pilots with tiger teams' }
                             ]
                         },
                         {
                             id: 'l2',
                             text: 'How well do you establish baselines before AI implementation?',
                             options: [
-                                { level: 1, text: 'We don\'t measure baseline performance' },
-                                { level: 2, text: 'We have general ideas but no specific measurements' },
-                                { level: 3, text: 'We capture some baseline metrics inconsistently' },
-                                { level: 4, text: 'We systematically measure key metrics before implementation' },
-                                { level: 5, text: 'Comprehensive baseline measurement with control groups when possible' }
+                                { level: 1, text: 'Don\'t measure baseline performance' },
+                                { level: 2, text: 'General ideas but no specific measurements' },
+                                { level: 3, text: 'Capture some metrics inconsistently' },
+                                { level: 4, text: 'Systematically measure key metrics before' },
+                                { level: 5, text: 'Comprehensive baselines with control groups' }
                             ]
                         },
                         {
                             id: 'l3',
                             text: 'How do you manage risks during AI implementation?',
                             options: [
-                                { level: 1, text: 'We don\'t formally assess or manage AI risks' },
-                                { level: 2, text: 'We react to problems as they arise' },
-                                { level: 3, text: 'Basic risk awareness but no formal mitigation plans' },
-                                { level: 4, text: 'Proactive risk identification with mitigation strategies' },
-                                { level: 5, text: 'Comprehensive risk framework with guardrails, controls, and monitoring' }
-                            ]
-                        },
-                        {
-                            id: 'l4',
-                            text: 'How do you gather and act on feedback during pilots?',
-                            options: [
-                                { level: 1, text: 'No structured feedback collection' },
-                                { level: 2, text: 'Informal feedback from occasional conversations' },
-                                { level: 3, text: 'Regular check-ins but inconsistent action on feedback' },
-                                { level: 4, text: 'Structured feedback loops with rapid iteration cycles' },
-                                { level: 5, text: 'Continuous feedback integrated into automated improvement processes' }
-                            ]
-                        },
-                        {
-                            id: 'l5',
-                            text: 'How do you communicate pilot results internally?',
-                            options: [
-                                { level: 1, text: 'Results stay within the pilot team' },
-                                { level: 2, text: 'Informal sharing through word of mouth' },
-                                { level: 3, text: 'Occasional presentations to leadership' },
-                                { level: 4, text: 'Structured reporting with quantified impact to stakeholders' },
-                                { level: 5, text: 'Strategic communication plan building momentum for scaling' }
+                                { level: 1, text: 'Don\'t formally assess or manage AI risks' },
+                                { level: 2, text: 'React to problems as they arise' },
+                                { level: 3, text: 'Basic risk awareness but no formal plans' },
+                                { level: 4, text: 'Proactive identification with mitigation strategies' },
+                                { level: 5, text: 'Comprehensive framework with guardrails and monitoring' }
                             ]
                         }
                     ]
@@ -1650,11 +1629,11 @@
                             id: 'e1',
                             text: 'How do you scale successful AI initiatives?',
                             options: [
-                                { level: 1, text: 'We haven\'t scaled any AI initiatives yet' },
+                                { level: 1, text: 'Haven\'t scaled any AI initiatives yet' },
                                 { level: 2, text: 'Scaling happens organically without a plan' },
                                 { level: 3, text: 'Some structured expansion but inconsistent' },
-                                { level: 4, text: 'Defined scaling playbook from pilot to department-wide' },
-                                { level: 5, text: 'Enterprise scaling blueprint with phased rollout and success criteria' }
+                                { level: 4, text: 'Defined scaling playbook from pilot to department' },
+                                { level: 5, text: 'Enterprise blueprint with phased rollout criteria' }
                             ]
                         },
                         {
@@ -1663,42 +1642,20 @@
                             options: [
                                 { level: 1, text: 'No formal AI governance' },
                                 { level: 2, text: 'Basic policies drafted but not enforced' },
-                                { level: 3, text: 'Governance exists in some areas but not comprehensive' },
-                                { level: 4, text: 'Established governance with clear ownership and decision rights' },
-                                { level: 5, text: 'AI Center of Excellence with cross-functional governance and standards' }
+                                { level: 3, text: 'Governance in some areas but not comprehensive' },
+                                { level: 4, text: 'Established governance with clear ownership' },
+                                { level: 5, text: 'AI Center of Excellence with cross-functional standards' }
                             ]
                         },
                         {
                             id: 'e3',
-                            text: 'How do you measure AI value at an enterprise level?',
-                            options: [
-                                { level: 1, text: 'No enterprise-level AI measurement' },
-                                { level: 2, text: 'Track costs but not value creation' },
-                                { level: 3, text: 'Department-level ROI but not aggregated' },
-                                { level: 4, text: 'Multi-level measurement (technical, operational, business)' },
-                                { level: 5, text: 'Executive dashboards with comprehensive AI portfolio metrics' }
-                            ]
-                        },
-                        {
-                            id: 'e4',
-                            text: 'How are roles and skills evolving with AI adoption?',
-                            options: [
-                                { level: 1, text: 'No changes to roles or skill requirements' },
-                                { level: 2, text: 'Some individuals upskilling independently' },
-                                { level: 3, text: 'Ad-hoc training programs with inconsistent coverage' },
-                                { level: 4, text: 'Defined AI skill tracks and role evolution paths' },
-                                { level: 5, text: 'Strategic workforce transformation with new AI-native roles' }
-                            ]
-                        },
-                        {
-                            id: 'e5',
                             text: 'How do you continuously improve your AI systems?',
                             options: [
                                 { level: 1, text: 'No systematic improvement process' },
                                 { level: 2, text: 'Fix problems when they become critical' },
                                 { level: 3, text: 'Periodic reviews with some improvements' },
                                 { level: 4, text: 'Regular optimization based on performance data' },
-                                { level: 5, text: 'Continuous improvement loops with automated monitoring and iteration' }
+                                { level: 5, text: 'Continuous improvement with automated monitoring' }
                             ]
                         }
                     ]
@@ -1754,7 +1711,7 @@
                                        onclick="selectOption('${question.id}', ${option.level}, this)">
                                     <div class="option-radio"></div>
                                     <div class="option-content">
-                                        <div class="option-level">Level ${option.level}</div>
+                                        <div class="option-level" style="color: ${maturityLabels[option.level].color};">${maturityLabels[option.level].name}</div>
                                         <div class="option-text">${option.text}</div>
                                     </div>
                                 </label>
@@ -1852,12 +1809,12 @@
             }
 
             // Progress milestones
-            if (answeredCount === 13 && !achievements.includes('halfwayThere')) {
+            if (answeredCount === 8 && !achievements.includes('halfwayThere')) {
                 showAchievementToast('halfwayThere');
                 createConfetti();
             }
 
-            if (answeredCount === 22 && !achievements.includes('almostDone')) {
+            if (answeredCount === 13 && !achievements.includes('almostDone')) {
                 showAchievementToast('almostDone');
             }
 
@@ -1926,7 +1883,7 @@
         }
 
         function updateProgress() {
-            const totalQuestions = 25;
+            const totalQuestions = 15;
             const answeredCount = Object.keys(answers).length;
             const progress = (answeredCount / totalQuestions) * 100;
 
@@ -1970,12 +1927,12 @@
             if (currentDim) {
                 const answeredInCurrent = currentDim.questions.filter(q => answers[q.id] !== undefined).length;
                 document.getElementById('status-dimension-name').textContent = dimensionNames[currentDimension];
-                document.getElementById('status-question-count').textContent = `${answeredInCurrent}/5`;
+                document.getElementById('status-question-count').textContent = `${answeredInCurrent}/3`;
             }
 
             // Update percentage
             const totalAnswered = Object.keys(answers).length;
-            const percentage = Math.round((totalAnswered / 25) * 100);
+            const percentage = Math.round((totalAnswered / 15) * 100);
             document.getElementById('status-percentage').textContent = `${percentage}%`;
         }
 
@@ -2110,6 +2067,64 @@
             return recommendations[dimensionId][level];
         }
 
+        function getScoreBand(average) {
+            if (average < 2.0) return 'atRisk';
+            if (average < 3.0) return 'emerging';
+            if (average < 4.0) return 'developing';
+            if (average <= 4.5) return 'advanced';
+            return 'leading';
+        }
+
+        function generateExecutiveSummary(scores) {
+            const sorted = Object.entries(scores)
+                .filter(([key]) => key !== 'overall')
+                .sort((a, b) => b[1].average - a[1].average);
+
+            const strongest = sorted[0];
+            const weakest = sorted[sorted.length - 1];
+            const strongestDim = assessmentData.dimensions.find(d => d.id === strongest[0]);
+            const weakestDim = assessmentData.dimensions.find(d => d.id === weakest[0]);
+            const gap = strongest[1].average - weakest[1].average;
+            const band = getScoreBand(scores.overall.average);
+
+            let paragraph1 = '';
+            let paragraph2 = '';
+
+            // Paragraph 1: Pattern Analysis
+            if (gap > 1.5) {
+                paragraph1 = `Your assessment reveals a significant imbalance in AI maturity. You show relative strength in <strong>${strongestDim.name}</strong> (${strongest[1].average.toFixed(1)}) but a critical gap in <strong>${weakestDim.name}</strong> (${weakest[1].average.toFixed(1)}). This ${gap.toFixed(1)}-point spread suggests your AI initiatives may be built on an unstable foundation—`;
+
+                if (weakest[0] === 'strategic') {
+                    paragraph1 += `without clear strategic outcomes, even well-executed AI projects won't deliver business value.`;
+                } else if (weakest[0] === 'chart') {
+                    paragraph1 += `without mapped friction points, you're likely automating the wrong processes.`;
+                } else if (weakest[0] === 'align') {
+                    paragraph1 += `without aligned capabilities, you're vulnerable to choosing tools that don't fit your actual needs.`;
+                } else if (weakest[0] === 'launch') {
+                    paragraph1 += `without controlled launches, promising pilots will fail to prove ROI.`;
+                } else {
+                    paragraph1 += `without evolution plans, successful pilots will stall before delivering enterprise value.`;
+                }
+            } else {
+                paragraph1 = `Your AI maturity is relatively balanced across dimensions, with scores ranging from ${weakest[1].average.toFixed(1)} to ${strongest[1].average.toFixed(1)}. Your strongest area is <strong>${strongestDim.name}</strong>, while <strong>${weakestDim.name}</strong> presents the greatest opportunity for improvement.`;
+            }
+
+            // Paragraph 2: Business Translation
+            if (band === 'atRisk') {
+                paragraph2 = `<strong>For your GTM motion, this is a critical concern.</strong> Organizations at this maturity level see AI projects fail at 3x the industry average. Without intervention, you risk wasting budget on initiatives that won't scale, losing talent to AI-forward competitors, and falling 12-18 months behind peers who are already operationalizing AI. The window to catch up is narrowing.`;
+            } else if (band === 'emerging') {
+                paragraph2 = `<strong>For your GTM motion, you're at a pivotal moment.</strong> Many organizations stall at this stage—pilots don't translate to production value, "AI fatigue" sets in, and budgets get reallocated after failed experiments. The difference between teams that break through and those that regress comes down to systematic execution in your weakest areas.`;
+            } else if (band === 'developing') {
+                paragraph2 = `<strong>For your GTM motion, you have solid foundations but scaling challenges ahead.</strong> The risk at this stage is that good work stays siloed, governance gaps create compliance risks, and the first-mover advantage window closes. Focus on enterprise-wide consistency to convert your departmental wins into competitive advantage.`;
+            } else if (band === 'advanced') {
+                paragraph2 = `<strong>For your GTM motion, you're positioned to lead.</strong> Your AI capabilities are strong, but competitors are working hard to close the gap. The focus now should be on continuous optimization, expanding AI into new value streams, and building the talent pipeline to sustain your advantage over the next 2-3 years.`;
+            } else {
+                paragraph2 = `<strong>For your GTM motion, you're in the top tier.</strong> Your challenge is maintaining leadership as the field advances rapidly. Focus on emerging technologies, AI-native talent development, and identifying the next wave of AI-driven competitive advantages before your peers.`;
+            }
+
+            return { paragraph1, paragraph2 };
+        }
+
         function showResults() {
             document.getElementById('assessment-screen').style.display = 'none';
             document.getElementById('results-screen').style.display = 'block';
@@ -2123,6 +2138,10 @@
 
             const scores = calculateScores();
             const overallMaturity = getMaturityLevel(scores.overall.average);
+            const band = getScoreBand(scores.overall.average);
+            const bandInfo = scoreBands[band];
+            const risks = riskOfInaction[band];
+            const summary = generateExecutiveSummary(scores);
 
             let html = `
                 <div class="results-header animate-in">
@@ -2130,23 +2149,52 @@
                     <h2>Your SCALE AI Maturity Assessment Results</h2>
                     <p>Based on your responses across all 5 dimensions</p>
                     <div class="overall-score">
-                        <div class="score-circle">
+                        <div class="score-circle" style="border-color: ${bandInfo.color}40;">
                             <div class="score-value">${scores.overall.average.toFixed(1)}</div>
                             <div class="score-label">out of 5.0</div>
                         </div>
                         <div class="maturity-level">
-                            <h3>Level ${overallMaturity.level}: ${overallMaturity.name}</h3>
-                            <p>${overallMaturity.description}</p>
+                            <div style="display: inline-block; padding: 0.5rem 1rem; background: ${bandInfo.color}30; border-radius: 2rem; margin-bottom: 0.75rem;">
+                                <span style="color: ${bandInfo.color}; font-weight: 700; font-size: 1.125rem;">${bandInfo.name}</span>
+                            </div>
+                            <h3 style="margin-bottom: 0.25rem;">${overallMaturity.name}</h3>
+                            <p>${bandInfo.description}</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="results-grid">
+                <!-- Executive Summary -->
+                <div class="result-card animate-in" style="margin-top: 1.5rem; border-left: 4px solid ${bandInfo.color};">
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📊</span> Your AI Maturity Analysis
+                    </h3>
+                    <p style="color: var(--gray-700); line-height: 1.7; margin-bottom: 1rem;">
+                        ${summary.paragraph1}
+                    </p>
+                    <p style="color: var(--gray-700); line-height: 1.7;">
+                        ${summary.paragraph2}
+                    </p>
+                </div>
+
+                <!-- Risk of Inaction -->
+                <div class="result-card animate-in" style="margin-top: 1.5rem; background: linear-gradient(135deg, ${bandInfo.color}08, ${bandInfo.color}15); border: 1px solid ${bandInfo.color}30;">
+                    <h3 style="margin-bottom: 1rem; color: ${bandInfo.color}; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span> ${risks.title}
+                    </h3>
+                    <p style="font-weight: 600; color: var(--gray-700); margin-bottom: 0.75rem;">What happens if you don't act:</p>
+                    <ul style="margin: 0; padding-left: 1.25rem; color: var(--gray-600);">
+                        ${risks.risks.map(risk => `<li style="margin-bottom: 0.5rem;">${risk}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="results-grid" style="margin-top: 1.5rem;">
             `;
 
             assessmentData.dimensions.forEach(dimension => {
                 const score = scores[dimension.id];
                 const maturity = getMaturityLevel(score.average);
+                const dimBand = getScoreBand(score.average);
+                const dimBandInfo = scoreBands[dimBand];
                 const recommendations = getRecommendations(dimension.id, score.average);
 
                 html += `
@@ -2161,7 +2209,7 @@
                                     <p>${dimension.tagline}</p>
                                 </div>
                             </div>
-                            <div class="result-score-badge score-level-${maturity.level}">
+                            <div class="result-score-badge" style="background: ${dimBandInfo.color}20; color: ${dimBandInfo.color};">
                                 ${score.average.toFixed(1)}
                             </div>
                         </div>
@@ -2169,7 +2217,7 @@
                             <div class="result-bar-fill" style="width: ${score.percentage}%; background: ${dimension.gradient};"></div>
                         </div>
                         <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">
-                            <strong>Level ${maturity.level}: ${maturity.name}</strong> — ${maturity.description}
+                            <strong style="color: ${dimBandInfo.color};">${dimBandInfo.name}: ${maturity.name}</strong> — ${maturity.description}
                         </div>
                         <div class="recommendations">
                             <h5>Recommended Next Steps:</h5>
@@ -2233,8 +2281,8 @@
                     </div>
                 </div>
 
-                <div class="cta-section animate-in">
-                    <h3>Take Your Results to the AI Architecture Lab</h3>
+                <div class="cta-section animate-in" style="background: linear-gradient(135deg, ${bandInfo.color}10, ${bandInfo.color}20);">
+                    <h3>Don't Let These Insights Go to Waste</h3>
                     <p style="max-width: 600px; margin: 0 auto 1.5rem;">
                         Bring your assessment to the <strong>AI Architecture Lab</strong> to move to the next level, implement AI effectively, and ensure you realize the true value of AI for your organization.
                     </p>
@@ -2280,6 +2328,10 @@
 
             const scores = calculateScores();
             const overallMaturity = getMaturityLevel(scores.overall.average);
+            const band = getScoreBand(scores.overall.average);
+            const bandInfo = scoreBands[band];
+            const risks = riskOfInaction[band];
+            const summary = generateExecutiveSummary(scores);
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
 
@@ -2298,6 +2350,15 @@
             const brandOrange = [252, 136, 82];
             const brandYellow = [252, 174, 38];
 
+            // Convert hex to RGB for band colors
+            const bandColors = {
+                atRisk: brandPink,
+                emerging: brandOrange,
+                developing: brandYellow,
+                advanced: brandCyan,
+                leading: brandGreen
+            };
+
             const dimensionColors = {
                 strategic: brandBlue,
                 chart: brandPink,
@@ -2314,6 +2375,11 @@
                     return true;
                 }
                 return false;
+            }
+
+            // Helper to strip HTML tags
+            function stripHtml(html) {
+                return html.replace(/<[^>]*>/g, '');
             }
 
             // === HEADER SECTION ===
@@ -2344,8 +2410,8 @@
             pdf.text('Overall Assessment Results', margin, yPos);
             yPos += 15;
 
-            // Score box
-            pdf.setFillColor(...brandBlue);
+            // Score box with band color
+            pdf.setFillColor(...bandColors[band]);
             pdf.roundedRect(margin, yPos, 50, 50, 5, 5, 'F');
             pdf.setTextColor(255, 255, 255);
             pdf.setFontSize(28);
@@ -2354,64 +2420,110 @@
             pdf.setFontSize(10);
             pdf.text('out of 5.0', margin + 25, yPos + 40, { align: 'center' });
 
-            // Maturity level info
+            // Band and maturity level info
+            pdf.setTextColor(...bandColors[band]);
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(bandInfo.name, margin + 60, yPos + 12);
             pdf.setTextColor(...brandDark);
             pdf.setFontSize(16);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(`Level ${overallMaturity.level}: ${overallMaturity.name}`, margin + 60, yPos + 15);
-            pdf.setFontSize(11);
+            pdf.text(overallMaturity.name, margin + 60, yPos + 24);
+            pdf.setFontSize(10);
             pdf.setFont('helvetica', 'normal');
             pdf.setTextColor(100, 100, 100);
-            const descLines = pdf.splitTextToSize(overallMaturity.description, contentWidth - 70);
-            pdf.text(descLines, margin + 60, yPos + 25);
+            const descLines = pdf.splitTextToSize(bandInfo.description, contentWidth - 70);
+            pdf.text(descLines, margin + 60, yPos + 34);
 
-            yPos += 65;
+            yPos += 60;
+
+            // === EXECUTIVE SUMMARY ===
+            pdf.setFillColor(...bandColors[band]);
+            pdf.rect(margin, yPos, 4, 45, 'F');
+
+            pdf.setTextColor(...brandDark);
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Your AI Maturity Analysis', margin + 10, yPos + 8);
+
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(60, 60, 60);
+            const summaryText1 = pdf.splitTextToSize(stripHtml(summary.paragraph1), contentWidth - 15);
+            pdf.text(summaryText1, margin + 10, yPos + 16);
+
+            const summaryText2 = pdf.splitTextToSize(stripHtml(summary.paragraph2), contentWidth - 15);
+            pdf.text(summaryText2, margin + 10, yPos + 16 + (summaryText1.length * 4) + 6);
+
+            yPos += 55 + (summaryText1.length * 2);
+
+            // === RISK OF INACTION ===
+            checkNewPage(50);
+            pdf.setFillColor(255, 245, 245);
+            pdf.roundedRect(margin, yPos, contentWidth, 45, 3, 3, 'F');
+            pdf.setFillColor(...bandColors[band]);
+            pdf.rect(margin, yPos, 4, 45, 'F');
+
+            pdf.setTextColor(...bandColors[band]);
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`⚠ ${risks.title}`, margin + 10, yPos + 10);
+
+            pdf.setTextColor(80, 80, 80);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            risks.risks.slice(0, 3).forEach((risk, i) => {
+                pdf.text(`• ${risk}`, margin + 10, yPos + 20 + (i * 8));
+            });
+
+            yPos += 55;
 
             // === SCALE DIMENSION BREAKDOWN ===
+            checkNewPage(100);
             pdf.setTextColor(...brandDark);
-            pdf.setFontSize(16);
+            pdf.setFontSize(14);
             pdf.setFont('helvetica', 'bold');
             pdf.text('Dimension Breakdown', margin, yPos);
             yPos += 12;
 
             // Dimension scores bar chart
             assessmentData.dimensions.forEach((dimension, index) => {
-                checkNewPage(25);
+                checkNewPage(20);
                 const score = scores[dimension.id];
                 const barWidth = (score.average / 5) * (contentWidth - 50);
                 const color = dimensionColors[dimension.id];
+                const dimBand = getScoreBand(score.average);
 
                 // Label
-                pdf.setFontSize(11);
+                pdf.setFontSize(10);
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(...brandDark);
                 pdf.text(`${dimension.letter} - ${dimension.name}`, margin, yPos);
 
-                // Score
+                // Score and band
                 pdf.setTextColor(...color);
-                pdf.text(score.average.toFixed(1), pageWidth - margin, yPos, { align: 'right' });
+                pdf.text(`${score.average.toFixed(1)} (${scoreBands[dimBand].name})`, pageWidth - margin, yPos, { align: 'right' });
 
                 yPos += 5;
 
                 // Background bar
                 pdf.setFillColor(230, 230, 230);
-                pdf.roundedRect(margin, yPos, contentWidth - 30, 6, 2, 2, 'F');
+                pdf.roundedRect(margin, yPos, contentWidth - 30, 5, 2, 2, 'F');
 
                 // Score bar
                 pdf.setFillColor(...color);
-                pdf.roundedRect(margin, yPos, barWidth, 6, 2, 2, 'F');
+                pdf.roundedRect(margin, yPos, barWidth, 5, 2, 2, 'F');
 
-                yPos += 15;
+                yPos += 12;
             });
 
-            yPos += 10;
+            yPos += 5;
 
             // === DETAILED RESULTS PER DIMENSION ===
             pdf.addPage();
             yPos = margin;
 
             pdf.setTextColor(...brandDark);
-            pdf.setFontSize(18);
+            pdf.setFontSize(16);
             pdf.setFont('helvetica', 'bold');
             pdf.text('Detailed Results & Recommendations', margin, yPos);
             yPos += 15;
@@ -2482,22 +2594,22 @@
             pdf.text('SCALE Maturity Levels Reference', margin, yPos);
             yPos += 10;
 
-            const maturityLevels = [
-                { level: 1, name: 'Experimenting', desc: 'Ad-hoc AI exploration without strategic direction', color: brandPink },
-                { level: 2, name: 'Exploring', desc: 'Beginning to identify AI opportunities with emerging structure', color: brandOrange },
-                { level: 3, name: 'Establishing', desc: 'Structured approach emerging with defined processes', color: brandYellow },
-                { level: 4, name: 'Executing', desc: 'Systematic implementation with measurable outcomes', color: brandCyan },
-                { level: 5, name: 'Scaling', desc: 'Enterprise-wide AI integration with continuous improvement', color: brandGreen }
+            const maturityLevelsList = [
+                { label: 'Ad Hoc', desc: 'Reactive, unstructured, accidental AI exploration', color: brandPink },
+                { label: 'Exploring', desc: 'Curious, experimenting with AI, but inconsistent', color: brandOrange },
+                { label: 'Establishing', desc: 'Intentional approach, building AI foundations', color: brandYellow },
+                { label: 'Executing', desc: 'Systematic AI implementation with measurable outcomes', color: brandCyan },
+                { label: 'Scaling', desc: 'Enterprise-wide AI integration with continuous improvement', color: brandGreen }
             ];
 
-            maturityLevels.forEach(level => {
+            maturityLevelsList.forEach((level, idx) => {
                 checkNewPage(15);
                 pdf.setFillColor(...level.color);
                 pdf.circle(margin + 5, yPos + 3, 4, 'F');
                 pdf.setTextColor(...brandDark);
                 pdf.setFontSize(10);
                 pdf.setFont('helvetica', 'bold');
-                pdf.text(`Level ${level.level}: ${level.name}`, margin + 15, yPos + 5);
+                pdf.text(level.label, margin + 15, yPos + 5);
                 pdf.setFont('helvetica', 'normal');
                 pdf.setTextColor(100, 100, 100);
                 pdf.text(level.desc, margin + 15, yPos + 11);
