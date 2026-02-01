@@ -504,6 +504,152 @@
             100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
         }
 
+        /* Email Capture Modal */
+        .email-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 6, 25, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .email-modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .email-modal {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .email-modal-overlay.visible .email-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .email-modal h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .email-modal p {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .email-modal-progress {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .email-modal-progress .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray-200);
+        }
+
+        .email-modal-progress .progress-dot.filled {
+            background: var(--brand-green);
+        }
+
+        .email-modal-progress .progress-dot.current {
+            background: var(--brand-blue);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .email-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(33, 111, 223, 0.1);
+        }
+
+        .email-input.error {
+            border-color: var(--brand-pink);
+        }
+
+        .email-error-message {
+            color: var(--brand-pink);
+            font-size: 0.875rem;
+            text-align: left;
+            display: none;
+        }
+
+        .email-error-message.visible {
+            display: block;
+        }
+
+        .email-submit-btn {
+            width: 100%;
+            background: var(--gradient-2);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .email-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(33, 111, 223, 0.4);
+        }
+
+        .email-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .email-modal-footer {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
         /* Achievement Badge */
         .achievement-toast {
             position: fixed;
@@ -1395,7 +1541,167 @@
     <!-- Achievement Toast Container -->
     <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
+    <!-- Email Capture Modal -->
+    <div class="email-modal-overlay" id="email-modal">
+        <div class="email-modal">
+            <h2>You're Halfway There!</h2>
+            <p>Enter your email to save your progress and receive your personalized results report.</p>
+
+            <div class="email-modal-progress">
+                <div class="progress-dot filled"></div>
+                <div class="progress-dot filled"></div>
+                <div class="progress-dot filled"></div>
+                <div class="progress-dot filled"></div>
+                <div class="progress-dot current"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+
+            <div class="email-input-group">
+                <input type="email" class="email-input" id="email-input" placeholder="Enter your email address" autocomplete="email">
+                <span class="email-error-message" id="email-error">Please enter a valid email address</span>
+                <button class="email-submit-btn" id="email-submit-btn" onclick="submitEmail()">
+                    Continue Assessment
+                </button>
+            </div>
+
+            <p class="email-modal-footer">
+                We'll send your results and insights from the AI Architecture Lab.
+            </p>
+        </div>
+    </div>
+
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://wjaqkdsumsvcvwxdckpa.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_h8xEzRBQ5aKWnNTy0M5TGA_ogGNJVxR';
+
+        // Email capture state
+        let userEmail = null;
+        let emailRecordId = null;
+        let emailCaptured = false;
+
+        // Supabase helper function
+        async function supabaseRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                }
+            };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+            if (!response.ok) {
+                throw new Error(`Supabase error: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        // Show email modal
+        function showEmailModal() {
+            document.getElementById('email-modal').classList.add('visible');
+            document.getElementById('email-input').focus();
+        }
+
+        // Hide email modal
+        function hideEmailModal() {
+            document.getElementById('email-modal').classList.remove('visible');
+        }
+
+        // Validate email
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Submit email
+        async function submitEmail() {
+            const emailInput = document.getElementById('email-input');
+            const errorMessage = document.getElementById('email-error');
+            const submitBtn = document.getElementById('email-submit-btn');
+            const email = emailInput.value.trim();
+
+            // Validate
+            if (!isValidEmail(email)) {
+                emailInput.classList.add('error');
+                errorMessage.classList.add('visible');
+                return;
+            }
+
+            // Clear errors
+            emailInput.classList.remove('error');
+            errorMessage.classList.remove('visible');
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            try {
+                // Calculate current score at capture
+                const answeredCount = Object.keys(answers).length;
+                const currentTotal = Object.values(answers).reduce((sum, val) => sum + val, 0);
+                const scoreAtCapture = answeredCount > 0 ? (currentTotal / answeredCount).toFixed(2) : 0;
+
+                // Save to Supabase
+                const result = await supabaseRequest('assessment_emails', 'POST', {
+                    email: email,
+                    score_at_capture: parseFloat(scoreAtCapture),
+                    completed_assessment: false
+                });
+
+                // Store for later update
+                userEmail = email;
+                if (result && result.length > 0) {
+                    emailRecordId = result[0].id;
+                }
+                emailCaptured = true;
+
+                // Hide modal and continue
+                hideEmailModal();
+
+            } catch (error) {
+                console.error('Error saving email:', error);
+                // Still allow them to continue even if save fails
+                emailCaptured = true;
+                hideEmailModal();
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Continue Assessment';
+        }
+
+        // Update record when assessment is completed
+        async function updateEmailRecordWithResults(finalScore, maturityLevel) {
+            if (!emailRecordId) return;
+
+            try {
+                await supabaseRequest(`assessment_emails?id=eq.${emailRecordId}`, 'PATCH', {
+                    completed_assessment: true,
+                    final_score: finalScore,
+                    maturity_level: maturityLevel
+                });
+            } catch (error) {
+                console.error('Error updating email record:', error);
+            }
+        }
+
+        // Allow Enter key to submit email
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email-input');
+            if (emailInput) {
+                emailInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        submitEmail();
+                    }
+                });
+            }
+        });
+
         // Maturity level labels
         const maturityLabels = {
             1: { name: 'Ad Hoc', color: '#fc4e99' },
@@ -1833,6 +2139,12 @@
             if (answeredCount === 8 && !achievements.includes('halfwayThere')) {
                 showAchievementToast('halfwayThere');
                 createConfetti();
+                // Show email capture modal after confetti (with delay for better UX)
+                if (!emailCaptured) {
+                    setTimeout(() => {
+                        showEmailModal();
+                    }, 1500);
+                }
             }
 
             if (answeredCount === 13 && !achievements.includes('almostDone')) {
@@ -2173,6 +2485,14 @@
             const band = getScoreBand(scores.overall.average);
             const bandInfo = scoreBands[band];
             const risks = riskOfInaction[band];
+
+            // Update email record with final results
+            if (emailRecordId) {
+                updateEmailRecordWithResults(
+                    scores.overall.average.toFixed(2),
+                    `${bandInfo.name} - ${overallMaturity.name}`
+                );
+            }
             const summary = generateExecutiveSummary(scores);
 
             let html = `
