@@ -1574,8 +1574,10 @@
 
     <script>
         // Supabase Configuration
+        // IMPORTANT: Use the anon/public key from Project Settings > API (starts with 'eyJ...')
+        // The 'sb_publishable_' keys don't work with the REST API
         const SUPABASE_URL = 'https://wjaqkdsumsvcvwxdckpa.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_h8xEzRBQ5aKWnNTy0M5TGA_ogGNJVxR';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqYXFrZHN1bXN2Y3Z3eGRja3BhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NDYyMDQsImV4cCI6MjA4NTUyMjIwNH0.DK393nIQMH9JOYdYgUZZHZ0DOFIbRO3vUNRn1tFdc-I';
 
         // Email capture state
         let userEmail = null;
@@ -1596,11 +1598,25 @@
             if (body) {
                 options.body = JSON.stringify(body);
             }
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-            if (!response.ok) {
-                throw new Error(`Supabase error: ${response.status}`);
+
+            console.log('Supabase request:', method, endpoint, body);
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Supabase error response:', response.status, errorText);
+                    throw new Error(`Supabase error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                console.log('Supabase success:', data);
+                return data;
+            } catch (error) {
+                console.error('Supabase request failed:', error);
+                throw error;
             }
-            return response.json();
         }
 
         // Show email modal
