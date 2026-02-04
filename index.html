@@ -504,6 +504,46 @@
             100% { opacity: 0; transform: translateY(100px) rotate(720deg); }
         }
 
+        /* Video Container */
+        .video-container {
+            margin-top: 2rem;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .video-container.results-video {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            background: var(--gray-200);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 1rem;
+        }
+
+        .video-label {
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
         /* Email Capture Modal */
         .email-modal-overlay {
             position: fixed;
@@ -1529,6 +1569,14 @@
             <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--gray-500); max-width: 500px; margin-left: auto; margin-right: auto;">
                 <strong style="color: var(--brand-blue);">Bring your results to the AI Architecture Lab</strong> to implement effectively and realize the true value of AI.
             </p>
+
+            <!-- Home Page Video -->
+            <div class="video-container" id="home-video-container">
+                <div class="video-wrapper">
+                    <iframe id="home-video-iframe" src="" allowfullscreen></iframe>
+                </div>
+                <p class="video-label">Learn more about the AI Architecture Lab</p>
+            </div>
         </div>
 
         <!-- Assessment Screen -->
@@ -1573,6 +1621,45 @@
     </div>
 
     <script>
+        // Vidyard Video Configuration - Rotating videos for home and results pages
+        const vidyardVideos = [
+            'bTDmuH3zRR3ibMw3J8bMbB',
+            'PsoScDvUkoDT9gAt7XgdYw',
+            '66CE45dZf2i2BC353xMqdB',
+            'FX4exU5fPoKEkzBVyMnNPe',
+            'qRikkGJuKUZUU7LJjm3TsE'
+        ];
+
+        // Get random video (different for home vs results)
+        function getRandomVideo(excludeIndex = -1) {
+            let availableVideos = vidyardVideos.map((v, i) => i);
+            if (excludeIndex >= 0) {
+                availableVideos = availableVideos.filter(i => i !== excludeIndex);
+            }
+            const randomIndex = availableVideos[Math.floor(Math.random() * availableVideos.length)];
+            return { id: vidyardVideos[randomIndex], index: randomIndex };
+        }
+
+        // Initialize home page video
+        let homeVideoIndex = -1;
+        function initHomeVideo() {
+            const video = getRandomVideo();
+            homeVideoIndex = video.index;
+            const iframe = document.getElementById('home-video-iframe');
+            if (iframe) {
+                iframe.src = `https://play.vidyard.com/${video.id}.html?`;
+            }
+        }
+
+        // Initialize videos on page load
+        document.addEventListener('DOMContentLoaded', initHomeVideo);
+
+        // Get a different video for results page (excludes home video)
+        function getResultsVideo() {
+            const video = getRandomVideo(homeVideoIndex);
+            return video.id;
+        }
+
         // Supabase Configuration
         // IMPORTANT: Use the anon/public key from Project Settings > API (starts with 'eyJ...')
         // The 'sb_publishable_' keys don't work with the REST API
@@ -2614,6 +2701,14 @@ ${risks.title}
                     <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--gray-500);">
                         Your personalized report is your roadmap to AI success.
                     </p>
+
+                    <!-- Results Page Video -->
+                    <div class="video-container results-video">
+                        <div class="video-wrapper">
+                            <iframe id="results-video-iframe" src="https://play.vidyard.com/${getResultsVideo()}.html?" allowfullscreen></iframe>
+                        </div>
+                        <p class="video-label">See how the AI Architecture Lab can help you reach the next level</p>
+                    </div>
                 </div>
             `;
 
