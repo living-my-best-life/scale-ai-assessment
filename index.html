@@ -295,7 +295,14 @@
             min-height: calc(100vh - 140px);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-top: 2.5rem;
+        }
+
+        .welcome-logo {
+            height: 110px;
+            width: auto;
+            margin-bottom: 1.5rem;
         }
 
         .welcome-screen h1 {
@@ -1536,7 +1543,7 @@
         <div id="main-content"></div>
         <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcome-screen" aria-labelledby="welcome-title">
-            <img src="AI lab - logo (1).png" alt="AI Architecture Lab" style="height: 100px; width: auto; margin-bottom: 1.5rem;">
+            <img src="AI lab - logo (1).png" alt="AI Architecture Lab" class="welcome-logo">
             <h1 id="welcome-title">Assess Your <span>AI Maturity</span></h1>
             <p>Discover where you stand using the SCALE framework and get personalized recommendations.</p>
 
