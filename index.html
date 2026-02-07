@@ -1799,14 +1799,19 @@
         }
 
         // Update record when assessment is completed
-        async function updateEmailRecordWithResults(finalScore, maturityLevel) {
+        async function updateEmailRecordWithResults(finalScore, maturityLevel, dimensionScores) {
             if (!emailRecordId) return;
 
             try {
                 await supabaseRequest(`assessment_emails?id=eq.${emailRecordId}`, 'PATCH', {
                     completed_assessment: true,
                     final_score: finalScore,
-                    maturity_level: maturityLevel
+                    maturity_level: maturityLevel,
+                    score_strategic: dimensionScores.strategic,
+                    score_chart: dimensionScores.chart,
+                    score_align: dimensionScores.align,
+                    score_launch: dimensionScores.launch,
+                    score_evolve: dimensionScores.evolve
                 });
             } catch (error) {
                 console.error('Error updating email record:', error);
@@ -2611,9 +2616,17 @@
 
             // Update email record with final results
             if (emailRecordId) {
+                const dimensionScores = {
+                    strategic: scores.strategic.average.toFixed(2),
+                    chart: scores.chart.average.toFixed(2),
+                    align: scores.align.average.toFixed(2),
+                    launch: scores.launch.average.toFixed(2),
+                    evolve: scores.evolve.average.toFixed(2)
+                };
                 updateEmailRecordWithResults(
                     scores.overall.average.toFixed(2),
-                    `${bandInfo.name} - ${overallMaturity.name}`
+                    `${bandInfo.name} - ${overallMaturity.name}`,
+                    dimensionScores
                 );
             }
             const summary = generateExecutiveSummary(scores);
