@@ -1594,7 +1594,7 @@
     <div class="email-modal-overlay" id="email-modal">
         <div class="email-modal">
             <h2>You're Halfway There!</h2>
-            <p>Enter your email to save your progress and receive your personalized results report.</p>
+            <p>Enter your details to save your progress and receive your personalized results.</p>
 
             <div class="email-modal-progress">
                 <div class="progress-dot filled"></div>
@@ -1608,8 +1608,14 @@
             </div>
 
             <div class="email-input-group">
-                <input type="email" class="email-input" id="email-input" placeholder="Enter your email address" autocomplete="email">
-                <span class="email-error-message" id="email-error">Please enter a valid email address</span>
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <input type="text" class="email-input" id="first-name-input" placeholder="First name" autocomplete="given-name" style="flex: 1;">
+                    <input type="text" class="email-input" id="last-name-input" placeholder="Last name" autocomplete="family-name" style="flex: 1;">
+                </div>
+                <input type="email" class="email-input" id="email-input" placeholder="Work email" autocomplete="email" style="margin-bottom: 0.75rem;">
+                <input type="text" class="email-input" id="company-input" placeholder="Company" autocomplete="organization" style="margin-bottom: 0.75rem;">
+                <input type="text" class="email-input" id="title-input" placeholder="Job title" autocomplete="organization-title" style="margin-bottom: 0.75rem;">
+                <span class="email-error-message" id="email-error">Please fill in all fields with a valid email</span>
                 <button class="email-submit-btn" id="email-submit-btn" onclick="submitEmail()">
                     Continue Assessment
                 </button>
@@ -1710,7 +1716,7 @@
         // Show email modal
         function showEmailModal() {
             document.getElementById('email-modal').classList.add('visible');
-            document.getElementById('email-input').focus();
+            document.getElementById('first-name-input').focus();
         }
 
         // Hide email modal
@@ -1725,13 +1731,22 @@
 
         // Submit email
         async function submitEmail() {
+            const firstNameInput = document.getElementById('first-name-input');
+            const lastNameInput = document.getElementById('last-name-input');
             const emailInput = document.getElementById('email-input');
+            const companyInput = document.getElementById('company-input');
+            const titleInput = document.getElementById('title-input');
             const errorMessage = document.getElementById('email-error');
             const submitBtn = document.getElementById('email-submit-btn');
-            const email = emailInput.value.trim();
 
-            // Validate
-            if (!isValidEmail(email)) {
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
+            const email = emailInput.value.trim();
+            const company = companyInput.value.trim();
+            const title = titleInput.value.trim();
+
+            // Validate all fields
+            if (!firstName || !lastName || !isValidEmail(email) || !company || !title) {
                 emailInput.classList.add('error');
                 errorMessage.classList.add('visible');
                 return;
@@ -1753,7 +1768,11 @@
 
                 // Save to Supabase
                 const result = await supabaseRequest('assessment_emails', 'POST', {
+                    first_name: firstName,
+                    last_name: lastName,
                     email: email,
+                    company: company,
+                    title: title,
                     score_at_capture: parseFloat(scoreAtCapture),
                     completed_assessment: false
                 });
